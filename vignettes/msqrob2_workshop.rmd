@@ -1,0 +1,738 @@
+---
+title: "msqrob2PTM: msqrob2 Mass Spectrometry Data Analysis Workflow for differential PTM analysis"
+author:
+    - name: Lieven Clement, Nina Demeulemeester, Luca De Corso and Lucas Beerland
+output: 
+    rmarkdown::html_vignette:
+      toc: true
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('msqrob2')`"
+vignette: >
+    %\VignetteIndexEntry{msqrob2PTM use case}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+    warning = FALSE,
+    message = FALSE
+)
+```
+
+# Outline
+
+
+# Background
+
+The human phosphorylation datasets consist of 47 samples from condition A and 43 from condition B. Two aliquots were processed for each sample: one dedicated to total proteome analysis and the other one to the phosphoproteome analysis. The main sample preparation steps were identical for proteomics and phosphoproteomics apart from the additional phosphopeptide enrichment step. 
+Generated raw data files were searched against a database containing all human entries extracted from UniProtKB-SwissProt (25/08/2021, 20,339 entries) using MaxQuant (v.1.6.17). The minimal peptide length required was seven amino acids and a maximum of one missed cleavage was allowed. The mass tolerance for the precursor ions was set to 20 ppm for the first search and 4.5 ppm for the main search. The mass tolerance for the fragment ions was set to 20 ppm. For proteomics data, methionine oxidation and acetylation of proteins’ N-termini were set as variable modifications and cysteine carbamidomethylation as a fixed modification. For phosphoproteomics data, serine, threonine, and tyrosine phosphorylations were added as variable modifications. For protein quantification, the “match between runs” option was enabled. The maximum FDR was set to 1% at peptide and protein levels with the use of a decoy strategy. Intensities were extracted from the Evidence.txt file to perform the following statistical analysis. The dataset can be found on PRIDE (PXD043476).
+
+
+# Load packages
+
+```{r}
+suppressPackageStartupMessages({
+library("QFeatures")  
+library("dplyr") 
+library("tidyr")
+library("ggplot2")
+library("msqrob2")    
+library("stringr")
+library("ExploreModelMatrix")
+library("kableExtra")
+library("ComplexHeatmap")
+library("scater")
+library("patchwork")
+library("seqinr")
+library("data.table")
+library("BiocFileCache")
+library("purrr")
+})
+```
+
+# Import data
+
+The data were searched with MaxQuant version version 1.5.5.6 and are
+deposited on the PRIDE repository
+[PXD043476](https://www.ebi.ac.uk/pride/archive/projects/PXD043476).
+
+In this chapter we use the search files available on
+msqrob2data.
+
+## Phospho Data
+
+The phospho enriched data are stored in "evidence_phospho_enriched.txt.zip". 
+The corresponding annotation file can be found in "expDesign.csv". 
+
+```{r}
+bfc <- BiocFileCache()
+psmFile <- bfcrpath(bfc,"https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/phospho/evidence_phospho_enriched.txt.zip")
+psm <- fread(psmFile, check.names = TRUE, integer64 = "double")
+head(psm)
+```
+
+### Filtering 
+
+We will already filter the data to make it smaller by removing psms with missing values for the intensities and psms for which the probability on a phospo group is smaller or equal to 75%. 
+    
+1. The phospho probability can be found in the variable `Phospho..STY..Probabilities.` It is indicated at the position of the modification in the sequence between brackets. If there is no phosphorylation site detected the variable contains an empty string. We return the maximum probability among all potential sites.
+
+2. We keep the peptidoforms out if they have a probability on a phosph group is larger than 0.75 and if their intensity is not NA.
+
+```{r}
+psm <- psm |>
+  mutate(
+    prob = map_dbl(
+      str_extract_all(Phospho..STY..Probabilities, "\\(([^)]+)\\)"),
+      ~ if (length(.x) == 0) {
+          0
+        } else {
+          max(as.numeric(str_remove_all(.x, "[()]")))
+        }
+    ) 
+  ) |> filter(prob > .75 & !is.na(Intensity))
+```
+
+
+### Annotation file 
+
+```{r}
+annotFile <- bfcrpath(bfc,"https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/phospho/expDesign.csv")
+annot <- fread(annotFile, check.names = TRUE, integer64 = "double")
+head(annot)
+```
+
+The variable `source` can be used to link the phospho enriched and the non-enriched runs. 
+
+We will alter the annotation: 
+
+1. We first generate variable `runCol`, that gives an overview of the different runs in the experiment, i.e. the unique names in the column Run of the report file. This is a mandatory column in the annotation file that is required by the `readQFeatures` function that will be used to generate a QFeatures object with the quant data. The run in the evidence file is indicated with the variable `Raw.file` and here does not contain the file extension `.raw`, which we remove from the filenames stored in `File` of the meta data. 
+
+2. We make a variable condition. There are two conditions: condition A and condition B. We can extract this by taking the first letter from the variable `source`. 
+
+```{r}
+annot <- annot |> 
+  mutate(
+    runCol = gsub(pattern = ".raw",replacement = "", x=file), #1.
+    condition = substr(source,1,1)
+  )
+```
+
+
+### Convert to QFeatures
+
+First, recall that the psm table is file in long format. 
+Every quantitative column in the precursor table contains
+information for multiple runs. Therefore, the function split the table
+based on the run identifier, given by the `runCol` argument (for
+MaqQuant, that identifier is contained in `Raw.file`). 
+So, the
+`QFeatures` object after import will contain as many sets as there are
+runs. 
+Next, the function links the annotation table with the PSM data.
+To achieve this, the annotation table must contain a `runCol` column
+that provides the run identifier in which each sample has been
+acquired, and this information will be used to match the identifiers
+in the `Raw.file` column of the psm table. 
+
+Here, we will use the `Intensity` column as quantification input.
+
+```{r}
+(qf <- readQFeatures(assayData = psm,  
+                              colData = annot,
+                              quantCols = "Intensity",
+                              runCol = "Raw.file"))
+```
+
+## Non-enriched data 
+
+```{r}
+psmFileNE <- bfcrpath(bfc,"https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/phospho/evidence_nonenriched.txt.zip")
+
+psmNE <- fread(psmFileNE, check.names = TRUE, integer64 = "double")
+```
+
+
+### Annotation File
+
+```{r}
+annotFileNE <- bfcrpath(bfc,"https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/phospho/expDesignNonEnriched.csv")
+annotNE <- fread(annotFileNE,check.names = TRUE, integer64 = "double")
+```
+
+1. We first generate variable `runCol`, that gives an overview of the different 
+runs in the experiment, i.e. the unique names in the column Run of the report 
+file. 
+This is a mandatory column in the annotation file that is required by the 
+`readQFeatures` function that will be used to generate a QFeatures object with 
+the quant data. The run in the evidence file is indicated with the variable 
+`Raw.file` and here does not contain the file extension `.raw`, which we remove 
+from the filenames stored in `File` of the meta data. 
+
+2. We make a variable condition. There are two conditions: condition A and 
+condition B. We can extract this by taking the first letter from the variable 
+Condition. 
+
+
+```{r}
+annotNE <- annotNE |> 
+  mutate(
+    runCol = gsub(pattern = ".raw",replacement = "", x=file), #1.
+    condition = substr(source,1,1)
+  )
+```
+
+
+The non-enriched dataset contains more samples than the phospho-enriched dataset. 
+We will remove the samples that are not matching to the these in the phospho 
+data. 
+The samples can be matched by the variable source. 
+
+```{r}
+annotNE <- annotNE |> 
+  filter(source %in% annot$source)
+```
+
+We will also filter out the psm-level data from the evidence file that does not 
+match to runs corresponding to the samples that are retained. We can use the 
+columns Raw.file in the psm table and runCol in the annotation for that purpose.
+
+```{r}
+psmNE <- psmNE |> 
+  filter(Raw.file %in% annotNE$runCol)
+```
+
+### Convert to QFeatures
+
+A gain we read the psm table which is in long format and use the `Intensity` 
+column as quantification input.
+
+```{r}
+(qfNE <- readQFeatures(assayData = psmNE,  
+                              colData = annotNE,
+                              quantCols = "Intensity",
+                              runCol = "Raw.file"))
+```
+
+# Data processing 
+
+## Phospho-enriched data
+
+1. Encoding missing values as zeros.
+
+```{r}
+qf <- zeroIsNA(qf, names(qf))
+```
+
+
+2. Keeping only the most intense PSM per ion (see here for a step-by-step explanation of the code). Upon this filtering every feature is unique to a ion identifier (peptide sequence + charge), and we hence can join sets using that identifier.
+
+```{r}
+for (i in names(qf)) {
+  rowdata <- rowData(qf[[i]]) 
+  rowdata$ionID <- paste0(rowdata$Modified.sequence, rowdata$Charge) 
+  rowdata$value <- assay(qf[[i]])[, 1]
+  rowdata <- data.frame(rowdata) |>
+    group_by(ionID) |>
+    mutate(psmRank = rank(-value))
+  rowData(qf[[i]])$psmRank <- rowdata$psmRank
+  rowData(qf[[i]])$ionID <- rowdata$ionID
+}
+qf <- filterFeatures(qf, ~ psmRank == 1, keep = TRUE)
+qf <- joinAssays(qf, names(qf), "ions", "ionID")
+```
+
+3. Filtering out decoy sequences, potential contaminants and sigma proteins that were just used for QC purposes.
+
+```{r}
+qf <- filterFeatures(qf, ~Proteins != "" & ## Remove failed protein inference
+                       !grepl(";", Proteins) & ## Remove protein groups
+                       Reverse != "+" & ## Remove decoys
+                       Potential.contaminant != "+" & ## Remove contaminants
+                       !grepl("Sigma", Proteins) ## Remove Sigma proteins used for internal QC
+                     )
+```
+
+4. log2-transform the intensities
+
+```{r}
+qf <- logTransform(qf, base = 2, i = "ions", name = "ionsLog")
+```
+
+
+Only keep ions that are picked up in at least 10 samples. 
+
+```{r}
+n <- ncol(qf[["ionsLog"]])
+qf <- filterNA(qf, i = "ionsLog", pNA = (n - 10) / n)
+```
+
+
+```{r}
+qf <- sweep(
+  qf, MARGIN = 2, STATS = nfLogMedianOfRatios(qf,"ionsLog"), 
+  i = "ionsLog", name = "ionsNorm"
+)
+```
+
+### QC
+
+
+```{r}
+psmDens <- qf[, , "ionsNorm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = interaction(condition, subset),
+      group = colname) +
+  geom_density() +
+  theme_minimal() +
+   labs(subtitle = "Normalised log2 phospho-ion intensities")
+psmDens
+```
+
+```{r}
+qf[, , "ionsNorm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = source,
+      y = value,
+      colour = interaction(condition,subset),
+      group = colname) +
+  xlab("sample") +
+  geom_boxplot() +
+  theme_minimal() +
+   labs(subtitle = "Normalised log2 phospho-ion intensities")
+```
+
+```{r}
+qf[, , "ionsNorm"] |>
+  longForm(colvars = colnames(colData(qf)), rowvars = "Charge") |>
+  as.data.frame() |>
+  filter(!is.na(value)) |>
+  filter(Charge<=4) |> 
+ggplot(aes(x = source)) +
+  geom_bar(aes(fill = factor(Charge, levels = 4:1)),
+           colour = "black") +
+  labs(title = "ion types per sample",
+       x = "Sample",
+       fill = "Charge state") +
+  theme_bw()
+```
+```{r}
+qf[,,"ionsNorm"] |> 
+  longForm(colvars = colnames(colData(qf)), 
+           rowvars= c("ionID", 
+                      "Proteins")) |>
+  data.frame() |>
+  filter(!is.na(value)) |>
+  group_by(condition, source) |>
+  summarise(ions = length(unique(ionID)),
+            `Proteins` = length(unique(Proteins))) |> 
+  pivot_longer(-(1:2),
+               names_to = "Feature",
+               values_to = "IDs") |> 
+  ggplot(aes(x = source, y = IDs, fill = condition)) +
+  geom_col() +
+  #scale_fill_observable() +
+  facet_wrap(~Feature,
+             scales = "free_y") +
+  labs(title = "Precursor and protein group identificiations per PTM sample",
+       x = "Sample",
+       y = "Identifications") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+```{r}
+psmMDS <- getWithColData(qf, "ionsNorm") |> 
+  as("SingleCellExperiment") |> 
+  runMDS(exprs_values = 1) |> 
+  plotMDS(colour_by = "condition", shape_by = "subset") + 
+  labs(title = "Median normalisation")
+psmMDS
+```
+
+## Non-enriched data
+
+
+1. Encoding missing values as zeros.
+
+```{r}
+qfNE <- zeroIsNA(qfNE, names(qfNE))
+```
+
+
+2. Keeping only the most intense PSM per ion (see here for a step-by-step explanation of the code). Upon this filtering every feature is unique to a ion identifier (peptide sequence + charge), and we hence can join sets using that identifier.
+
+```{r}
+for (i in names(qfNE)) {
+  rowdata <- rowData(qfNE[[i]]) 
+  rowdata$ionID <- paste0(rowdata$Modified.sequence, rowdata$Charge) 
+  rowdata$value <- assay(qfNE[[i]])[, 1]
+  rowdata <- data.frame(rowdata) |>
+    group_by(ionID) |>
+    mutate(psmRank = rank(-value))
+  rowData(qfNE[[i]])$psmRank <- rowdata$psmRank
+  rowData(qfNE[[i]])$ionID <- rowdata$ionID
+}
+qfNE <- filterFeatures(qfNE, ~ psmRank == 1, keep = TRUE)
+qfNE <- joinAssays(qfNE, names(qfNE), "ions", "ionID")
+```
+
+3. Filtering out decoy sequences, potential contaminants and sigma proteins that were just used for QC purposes.
+
+```{r}
+qfNE <- filterFeatures(qfNE, ~Proteins != "" & ## Remove failed protein inference
+                       !grepl(";", Proteins) & ## Remove protein groups
+                       Reverse != "+" & ## Remove decoys
+                       Potential.contaminant != "+" & ## Remove contaminants
+                       !grepl("Sigma", Proteins) ## Remove Sigma proteins used for internal QC
+)
+```
+
+4. log2-transform the intensities
+
+```{r}
+qfNE <- logTransform(qfNE, base = 2, i = "ions", name = "ionsLog")
+```
+
+
+Only keep ions that are picked up in at least 10 samples. 
+
+```{r}
+n <- ncol(qfNE[["ionsLog"]])
+qfNE <- filterNA(qfNE, i = "ionsLog", pNA = (n - 10) / n)
+```
+
+
+```{r}
+qfNE <- sweep(
+  qfNE, MARGIN = 2, STATS = nfLogMedianOfRatios(qfNE,"ionsLog"), 
+  i = "ionsLog", name = "ionsNorm"
+)
+```
+
+```{r,warning=FALSE}
+qfNE <- aggregateFeatures(qfNE,
+ i = "ionsNorm",
+ fcol = "Proteins",
+ na.rm = TRUE,
+ name = "proteins",
+ fun = MsCoreUtils::robustSummary)
+```
+
+
+### QC
+
+
+```{r}
+psmDens <- qfNE[, , "ionsNorm"] |>
+  longForm(colvars = colnames(colData(qfNE))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = interaction(condition, subset),
+      group = colname) +
+  geom_density() +
+  theme_minimal() +
+  labs(subtitle = "Normalised log2 ion intensities")
+psmDens
+```
+
+```{r}
+qfNE[, , "ionsNorm"] |>
+  longForm(colvars = colnames(colData(qfNE))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = source,
+      y = value,
+      colour = interaction(condition,subset),
+      group = colname) +
+  xlab("sample") +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(subtitle = "Normalised log2 ion intensities")
+```
+
+```{r}
+qfNE[, , "ionsNorm"] |>
+  longForm(colvars = colnames(colData(qfNE)), rowvars = "Charge") |>
+  as.data.frame() |>
+  filter(!is.na(value)) |>
+  filter(Charge<=4) |> 
+  ggplot(aes(x = source)) +
+  geom_bar(aes(fill = factor(Charge, levels = 4:1)),
+           colour = "black") +
+  labs(title = "ion types per sample",
+       x = "Sample",
+       fill = "Charge state") +
+  theme_bw()
+```
+```{r}
+qfNE[,,"ionsNorm"] |> 
+  longForm(colvars = colnames(colData(qfNE)), 
+           rowvars= c("ionID", 
+                      "Proteins")) |>
+  data.frame() |>
+  filter(!is.na(value)) |>
+  group_by(condition, source) |>
+  summarise(ions = length(unique(ionID)),
+            `Proteins` = length(unique(Proteins))) |> 
+  pivot_longer(-(1:2),
+               names_to = "Feature",
+               values_to = "IDs") |> 
+  ggplot(aes(x = source, y = IDs, fill = condition)) +
+  geom_col() +
+  #scale_fill_observable() +
+  facet_wrap(~Feature,
+             scales = "free_y") +
+  labs(title = "Precursor and protein group identificiations per PTM sample",
+       x = "Sample",
+       y = "Identifications") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+
+```{r}
+psmDens <- qfNE[, , "proteins"] |>
+  longForm(colvars = colnames(colData(qfNE))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = interaction(condition, subset),
+      group = colname) +
+  geom_density() +
+  theme_minimal() +
+  labs(subtitle = "Normalised log2 protein intensities")
+psmDens
+```
+
+```{r}
+qfNE[, , "proteins"] |>
+  longForm(colvars = colnames(colData(qfNE))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = source,
+      y = value,
+      colour = interaction(condition,subset),
+      group = colname) +
+  xlab("sample") +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(subtitle = "Normalised log2 protein intensities")
+```
+
+```{r}
+psmMDS <- getWithColData(qfNE, "proteins") |> 
+  as("SingleCellExperiment") |> 
+  runMDS(exprs_values = 1) |> 
+  plotMDS(colour_by = "condition", shape_by = "subset") + 
+  labs(title = "Median normalisation")
+psmMDS
+```
+
+# Differential Peptidoform abundance analysis
+
+## Model estimation
+
+1. We first define the model. 
+We only have two sources of variability in the experiment that we can model, 
+i.e. the effect of the condition and the subset.
+
+2. We fit this model to each psm ion of the normalised and log2-transformed 
+assay in QFeature object qf using the msqrob function.
+
+
+```{r warning = FALSE, message = FALSE}
+model <- ~ condition * subset
+qf <- msqrob(
+  qf,
+  i = "ionsNorm",
+  formula = model,
+  robust = TRUE)
+```
+
+We abled M-estimation (robust = TRUE) for improved robustness against outliers.
+
+## Inference
+
+We can now convert the research questions
+1. Is a precursor DA between the conditions in subset x
+2. Is a precursor DA between the conditions in subset y 
+3. Is the effect of condition different between subset x and y
+4. Prioritise precursors that are marginally DA between conditions. 
+
+In other words, we need to translate each question in a null and alternative 
+hypothesis using a single model parameter or a linear combination of model 
+parameters, which is also referred to with a contrast.
+
+To aid defining contrasts, we will visualise the experimental design using the ExploreModelMatrix package.
+
+```{r}
+vd <- ExploreModelMatrix::VisualizeDesign(
+    sampleData =  colData(qf),
+    designFormula = model,
+    textSizeFitted = 4
+)
+vd$plotlist
+```
+```{r}
+colData(qf)$subset |> table()
+```
+
+ADD contrasts
+
+
+Below we define the contrast and construct the corresponding contrast matrix.
+
+```{r}
+contrast <- c("conditionB= 0", 
+              "conditionB + conditionB:subsety = 0", 
+              "conditionB:subsety = 0", 
+              "conditionB + 60/90*conditionB:subsety = 0")
+(L <- makeContrast(
+  contrast,
+   parameterNames = colnames(vd$designmatrix)
+))
+```
+
+We assess the contrast for each psm ion.
+
+```{r}
+qf <- hypothesisTest(qf, i = "ionsNorm", contrast = L, overwrite = TRUE)
+```
+
+We extract the results table from the proteins summarised experiment in the qf object.
+
+```{r}
+inferences <- 
+  msqrobCollect(qf[["ionsNorm"]], L)
+```
+
+```{r}
+alpha <- 0.05
+volcanoplot <- plotVolcano(inferences) + 
+  facet_wrap(~contrast) + 
+  labs(title = "peptidoform ion level")
+volcanoplot
+```
+
+
+# Data Modeling at protein-level (Robust Regression)
+
+## Model estimation
+
+```{r warning = FALSE}
+qfNE <- msqrob(
+  qfNE,
+  i = "proteins",
+  formula = model,
+  robust = TRUE)
+```
+
+
+```{r}
+qfNE <- hypothesisTest(qfNE, i = "proteins", contrast = L, overwrite = TRUE)
+```
+
+We extract the results table from the proteins summarised experiment in the qf object.
+
+```{r}
+inferencesNE <- 
+  msqrobCollect(qfNE[["proteins"]], L)
+```
+
+```{r}
+alpha <- 0.05
+volcanoplot <- plotVolcano(inferencesNE) + 
+  facet_wrap(~contrast) + 
+  labs(title = "protein level")
+volcanoplot
+```
+
+# Peptidoform usage
+
+```{r}
+calculate_usage_paired <- function(qf, qfNE, i_precursor, i_protein = "proteins", fcol_precursor = "Proteins", fcol_protein = "Proteins", name = "ion_usage", match_cols_precursor_to_protein = colnames(qf[[i_precursor]]))
+{
+    nf <- assay(qf[[i_precursor]])
+    nf[,] <- NA
+    match_precursor_to_protein_FC <- match(
+      rowData(qf[[i_precursor]])[[fcol_precursor]], 
+      rowData(qfNE[[i_protein]])[[fcol_protein]])
+    idsMatch <- which(!is.na(match_precursor_to_protein_FC))
+    nf[idsMatch, ] <- assay(qfNE[[i_protein]])[match_precursor_to_protein_FC[idsMatch], match_cols_precursor_to_protein]
+    
+    qf <- sweep( #4. Subtract log2 norm factor elementwise (MARGIN = 1:2)
+      qf,
+      MARGIN = 1:2,
+      STATS = nf,
+      i = i_precursor,
+      name = name
+      )
+    match_name <- paste0("match_",i_precursor,"_to_",i_protein)
+    rowData(qf[[name]])[[match_name]] <- match_precursor_to_protein_FC 
+    qf <- filterFeatures(qf, i = name, filter = formula(paste0("~ !is.na(",match_name,")")))
+}
+```
+
+```{r}
+matchedSamps <- match(colData(qf)$source,colData(qfNE)$source)
+qf <- calculate_usage_paired(qf, qfNE, i_precursor = "ionsNorm", i_protein = "proteins", fcol_precursor = "Proteins", fcol_protein = "Proteins", name = "ion_usage", match_cols_precursor_to_protein = matchedSamps)
+
+```
+
+```{r}
+qf[, , "ion_usage"] |> #1.
+  longForm(colvars = colnames(colData(qf))) |>  #2. 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + #3.
+  aes(x = value,
+      colour = interaction(condition,subset),
+      group = colname) +
+  geom_density() +
+  labs(subtitle = "usage") +
+  theme_minimal()
+```
+
+## Model Estimation
+
+```{r warning=FALSE}
+qf <- msqrob(
+  qf,
+  i = "ion_usage",
+  formula = model,
+  robust = TRUE,
+  overwrite = TRUE)
+```
+
+We assess the contrast for each phospho-precursor usage.
+
+```{r}
+qf <- hypothesisTest(qf, i = "ion_usage", contrast = L, overwrite = TRUE)
+```
+
+We extract the results table from the proteins summarised experiment in the qf object.
+
+```{r}
+inferencesIonUsage <- 
+  msqrobCollect(qf[["ion_usage"]], L)
+```
+
+```{r}
+volcanoplot <- plotVolcano(inferencesIonUsage) + 
+  facet_wrap(~contrast) + 
+  labs(title = "Ion Usage")
+volcanoplot
+```
