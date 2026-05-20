@@ -54,4 +54,7 @@ Suggests:
 URL: https://statomics.github.io/2026_eurobioc_workshop_msqrob2ptm
 BugReports: https://github.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/issues/new/choose
 VignetteBuilder: knitr
+SystemRequirements:
+    pandoc,
+    quarto
 DockerImage: ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest
