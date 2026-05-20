@@ -1,4 +1,4 @@
-Package: 2026_eurobioc_workshop_msqrob2ptm
+Package: EuroBioc2026WorkshopMsqrob2PTM
 Title: "msqrob2 workshop: Differential PTM abundance and usage for mass spectrometry-based proteomics"
 Version: 0.0.99
 Authors@R: 
