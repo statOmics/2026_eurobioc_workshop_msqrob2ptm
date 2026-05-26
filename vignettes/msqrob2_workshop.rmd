@@ -66,7 +66,7 @@ The phospho enriched data are stored in "evidence_phospho_enriched.txt.zip".
 The corresponding annotation file can be found in "expDesign.csv". 
 
 ```{r}
-bfc <- BiocFileCache()
+bfc <- BiocFileCache("/opt/fileCache")
 psmFile <- bfcrpath(bfc,"https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/phospho/evidence_phospho_enriched.txt.zip")
 psm <- fread(psmFile, check.names = TRUE, integer64 = "double")
 head(psm)
@@ -421,9 +421,9 @@ qfNE <- sweep(
 qfNE <- aggregateFeatures(qfNE,
  i = "ionsNorm",
  fcol = "Proteins",
- na.rm = TRUE,
  name = "proteins",
- fun = MsCoreUtils::robustSummary)
+ fun = MsCoreUtils::medianPolish, 
+ na.rm = TRUE) # optional argumetn for medianPolish so as to deal with missing values
 ```
 
 
