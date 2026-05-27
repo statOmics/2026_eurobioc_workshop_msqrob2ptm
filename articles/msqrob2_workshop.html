@@ -49,6 +49,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/diann_study.html">msqrob2PTM: msqrob2 Mass Spectrometry Data Analysis Workflow for differential PTM analysis - DIA-NN case study</a>
+    </li>
+    <li>
       <a href="../articles/msqrob2_workshop.html">msqrob2PTM: msqrob2 Mass Spectrometry Data Analysis Workflow for differential PTM analysis</a>
     </li>
   </ul>
@@ -79,7 +82,7 @@ Analysis Workflow for differential PTM analysis</h1>
                         <h4 data-toc-skip class="author">Lieven Clement,
 Nina Demeulemeester, Luca De Corso and Lucas Beerland</h4>
                         
-            <h4 data-toc-skip class="date">26 May 2026</h4>
+            <h4 data-toc-skip class="date">27 May 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/blob/devel/vignettes/msqrob2_workshop.rmd" class="external-link"><code>vignettes/msqrob2_workshop.rmd</code></a></small>
       <div class="hidden name"><code>msqrob2_workshop.rmd</code></div>
@@ -152,7 +155,7 @@ deposited on the PRIDE repository <a href="https://www.ebi.ac.uk/pride/archive/p
 “evidence_phospho_enriched.txt.zip”. The corresponding annotation file
 can be found in “expDesign.csv”.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bfc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocFileCache/man/BiocFileCache-class.html" class="external-link">BiocFileCache</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">bfc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocFileCache/man/BiocFileCache-class.html" class="external-link">BiocFileCache</a></span><span class="op">(</span><span class="st">"/opt/fileCache"</span><span class="op">)</span></span>
 <span><span class="va">psmFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocFileCache/man/BiocFileCache-class.html" class="external-link">bfcrpath</a></span><span class="op">(</span><span class="va">bfc</span>,<span class="st">"https://github.com/statOmics/msqrob2data/raw/refs/heads/main/dda/phospho/evidence_phospho_enriched.txt.zip"</span><span class="op">)</span></span>
 <span><span class="va">psm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="va">psmFile</span>, check.names <span class="op">=</span> <span class="cn">TRUE</span>, integer64 <span class="op">=</span> <span class="st">"double"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">psm</span><span class="op">)</span></span></code></pre></div>
@@ -665,15 +668,14 @@ proteins that were just used for QC purposes.</li>
 <code class="sourceCode R"><span><span class="va">qfNE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span><span class="va">qfNE</span>,</span>
 <span> i <span class="op">=</span> <span class="st">"ionsNorm"</span>,</span>
 <span> fcol <span class="op">=</span> <span class="st">"Proteins"</span>,</span>
-<span> na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span> name <span class="op">=</span> <span class="st">"proteins"</span>,</span>
-<span> fun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/robustSummary.html" class="external-link">robustSummary</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   |                                                                              |                                                                      |   0%</span></span></code></pre>
-<pre><code><span><span class="co">##   |                                                                              |======================================================================| 100%</span></span></code></pre>
+<span> fun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/medianPolish.html" class="external-link">medianPolish</a></span>, </span>
+<span> na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># optional argumetn for medianPolish so as to deal with missing values</span></span></code></pre></div>
+<pre><code><span><span class="co">##   |                                                                              |                                                                      |   0%  |                                                                              |======================================================================| 100%</span></span></code></pre>
 <div class="section level4">
 <h4 id="qc-1">QC<a class="anchor" aria-label="anchor" href="#qc-1"></a>
 </h4>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">psmDens</span> <span class="op">&lt;-</span> <span class="va">qfNE</span><span class="op">[</span>, , <span class="st">"ionsNorm"</span><span class="op">]</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -687,7 +689,7 @@ proteins that were just used for QC purposes.</li>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Normalised log2 ion intensities"</span><span class="op">)</span></span>
 <span><span class="va">psmDens</span></span></code></pre></div>
 <p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-32-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qfNE</span><span class="op">[</span>, , <span class="st">"ionsNorm"</span><span class="op">]</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -702,7 +704,7 @@ proteins that were just used for QC purposes.</li>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Normalised log2 ion intensities"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-33-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qfNE</span><span class="op">[</span>, , <span class="st">"ionsNorm"</span><span class="op">]</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">)</span><span class="op">)</span>, rowvars <span class="op">=</span> <span class="st">"Charge"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -716,7 +718,7 @@ proteins that were just used for QC purposes.</li>
 <span>       fill <span class="op">=</span> <span class="st">"Charge state"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-34-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qfNE</span><span class="op">[</span>,,<span class="st">"ionsNorm"</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>           rowvars<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ionID"</span>, </span>
@@ -740,7 +742,7 @@ proteins that were just used for QC purposes.</li>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-35-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">psmDens</span> <span class="op">&lt;-</span> <span class="va">qfNE</span><span class="op">[</span>, , <span class="st">"proteins"</span><span class="op">]</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -754,7 +756,7 @@ proteins that were just used for QC purposes.</li>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Normalised log2 protein intensities"</span><span class="op">)</span></span>
 <span><span class="va">psmDens</span></span></code></pre></div>
 <p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-36-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qfNE</span><span class="op">[</span>, , <span class="st">"proteins"</span><span class="op">]</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -769,7 +771,7 @@ proteins that were just used for QC purposes.</li>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"Normalised log2 protein intensities"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-37-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">psmMDS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://github.com/waldronlab/MultiAssayExperiment/reference/MultiAssayExperiment-helpers.html" class="external-link">getWithColData</a></span><span class="op">(</span><span class="va">qfNE</span>, <span class="st">"proteins"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="st">"SingleCellExperiment"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">runMDS</a></span><span class="op">(</span>exprs_values <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -794,7 +796,7 @@ condition and the subset.</p></li>
 log2-transformed assay in QFeature object qf using the msqrob
 function.</p></li>
 </ol>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="op">~</span> <span class="va">condition</span> <span class="op">*</span> <span class="va">subset</span></span>
 <span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/msqrob.html" class="external-link">msqrob</a></span><span class="op">(</span></span>
 <span>  <span class="va">qf</span>,</span>
@@ -818,7 +820,7 @@ combination of model parameters, which is also referred to with a
 contrast.</p>
 <p>To aid defining contrasts, we will visualise the experimental design
 using the ExploreModelMatrix package.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vd</span> <span class="op">&lt;-</span> <span class="fu">ExploreModelMatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ExploreModelMatrix/man/VisualizeDesign.html" class="external-link">VisualizeDesign</a></span><span class="op">(</span></span>
 <span>    sampleData <span class="op">=</span>  <span class="fu">colData</span><span class="op">(</span><span class="va">qf</span><span class="op">)</span>,</span>
 <span>    designFormula <span class="op">=</span> <span class="va">model</span>,</span>
@@ -827,7 +829,7 @@ using the ExploreModelMatrix package.</p>
 <span><span class="va">vd</span><span class="op">$</span><span class="va">plotlist</span></span></code></pre></div>
 <pre><code><span><span class="co">## [[1]]</span></span></code></pre>
 <p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-40-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">colData</span><span class="op">(</span><span class="va">qf</span><span class="op">)</span><span class="op">$</span><span class="va">subset</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">##  x  y </span></span>
@@ -835,7 +837,7 @@ using the ExploreModelMatrix package.</p>
 <p>ADD contrasts</p>
 <p>Below we define the contrast and construct the corresponding contrast
 matrix.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contrast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"conditionB= 0"</span>, </span>
 <span>              <span class="st">"conditionB + conditionB:subsety = 0"</span>, </span>
 <span>              <span class="st">"conditionB:subsety = 0"</span>, </span>
@@ -855,14 +857,14 @@ matrix.</p>
 <span><span class="co">## subsety                             0                               0.0000000</span></span>
 <span><span class="co">## conditionB:subsety                  1                               0.6666667</span></span></code></pre>
 <p>We assess the contrast for each psm ion.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/hypothesisTest.html" class="external-link">hypothesisTest</a></span><span class="op">(</span><span class="va">qf</span>, i <span class="op">=</span> <span class="st">"ionsNorm"</span>, contrast <span class="op">=</span> <span class="va">L</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>We extract the results table from the proteins summarised experiment
 in the qf object.</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inferences</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/msqrobCollect.html" class="external-link">msqrobCollect</a></span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="st">"ionsNorm"</span><span class="op">]</span><span class="op">]</span>, <span class="va">L</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
 <span><span class="va">volcanoplot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/plotVolcano.html" class="external-link">plotVolcano</a></span><span class="op">(</span><span class="va">inferences</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">contrast</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -877,20 +879,20 @@ in the qf object.</p>
 <div class="section level3">
 <h3 id="model-estimation-1">Model estimation<a class="anchor" aria-label="anchor" href="#model-estimation-1"></a>
 </h3>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qfNE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/msqrob.html" class="external-link">msqrob</a></span><span class="op">(</span></span>
 <span>  <span class="va">qfNE</span>,</span>
 <span>  i <span class="op">=</span> <span class="st">"proteins"</span>,</span>
 <span>  formula <span class="op">=</span> <span class="va">model</span>,</span>
 <span>  robust <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qfNE</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/hypothesisTest.html" class="external-link">hypothesisTest</a></span><span class="op">(</span><span class="va">qfNE</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, contrast <span class="op">=</span> <span class="va">L</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>We extract the results table from the proteins summarised experiment
 in the qf object.</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inferencesNE</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/msqrobCollect.html" class="external-link">msqrobCollect</a></span><span class="op">(</span><span class="va">qfNE</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span>, <span class="va">L</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
 <span><span class="va">volcanoplot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/plotVolcano.html" class="external-link">plotVolcano</a></span><span class="op">(</span><span class="va">inferencesNE</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">contrast</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -902,33 +904,84 @@ in the qf object.</p>
 <div class="section level2">
 <h2 id="peptidoform-usage">Peptidoform usage<a class="anchor" aria-label="anchor" href="#peptidoform-usage"></a>
 </h2>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">calculate_usage_paired</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">qf</span>, <span class="va">qfNE</span>, <span class="va">i_precursor</span>, <span class="va">i_protein</span> <span class="op">=</span> <span class="st">"proteins"</span>, <span class="va">fcol_precursor</span> <span class="op">=</span> <span class="st">"Proteins"</span>, <span class="va">fcol_protein</span> <span class="op">=</span> <span class="st">"Proteins"</span>, <span class="va">name</span> <span class="op">=</span> <span class="st">"ion_usage"</span>, <span class="va">match_cols_precursor_to_protein</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="va">i_precursor</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<p>We can calculate the usages for every precursor ion by subtracting
+the corresponding log-transformed protein level abundance values from
+the log2 transformed and normalized precursor ion intensities.</p>
+<p>We first develop a function that will extract the corresponding
+protein level abundance values. It has following inputs:</p>
+<ul>
+<li>
+<code>se</code>: summarised experiment of the log2-transformed and
+normalized precursor ion</li>
+<li>
+<code>seNE</code>: summarised experiment of the log2-transformed,
+normalized and aggregated protein level abundances.</li>
+<li>
+<code>fcol</code>: annotation column with protein name for the
+precursor ions</li>
+<li>
+<code>fcolNE</code>: annotation column with protein name for the
+protein level abundances</li>
+<li>
+<code>matchColsSeToseNE</code>: a vector that matches the columns of
+<code>seNE</code> to these in <code>se</code>.</li>
+</ul>
+<p>The function</p>
+<ol style="list-style-type: decimal">
+<li>initiates the matrix with log2 tranformed correction factors at
+NA.</li>
+<li>Matches the rows of se with these of seNE using the annotation
+columns</li>
+<li>Extracts the protein abundance values for the precursors from the
+matching rows and columns in the protein level assay.</li>
+</ol>
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">calculate_usage_nfLog</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">se</span>, </span>
+<span>                               <span class="va">seNE</span>, </span>
+<span>                               <span class="va">fcol</span> <span class="op">=</span> <span class="st">"Proteins"</span>, </span>
+<span>                               <span class="va">fcolNE</span> <span class="op">=</span> <span class="st">"Proteins"</span>, </span>
+<span>                               <span class="va">matchColsSeToseNE</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span>
+<span>                               <span class="op">)</span></span>
 <span><span class="op">{</span></span>
-<span>    <span class="va">nf</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="va">i_precursor</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="va">nf</span><span class="op">[</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span>    <span class="va">match_precursor_to_protein_FC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span></span>
-<span>      <span class="fu">rowData</span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="va">i_precursor</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="va">fcol_precursor</span><span class="op">]</span><span class="op">]</span>, </span>
-<span>      <span class="fu">rowData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">[[</span><span class="va">i_protein</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="va">fcol_protein</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="va">idsMatch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">match_precursor_to_protein_FC</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="va">nf</span><span class="op">[</span><span class="va">idsMatch</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">qfNE</span><span class="op">[[</span><span class="va">i_protein</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="va">match_precursor_to_protein_FC</span><span class="op">[</span><span class="va">idsMatch</span><span class="op">]</span>, <span class="va">match_cols_precursor_to_protein</span><span class="op">]</span></span>
-<span>    </span>
-<span>    <span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rformassspectrometry.github.io/QFeatures/reference/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span> <span class="co">#4. Subtract log2 norm factor elementwise (MARGIN = 1:2)</span></span>
+<span>    <span class="va">nf</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">se</span><span class="op">)</span>; <span class="va">nf</span><span class="op">[</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span> <span class="co">#1. </span></span>
+<span>    <span class="va">matchSeRowsToSeNERows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span></span>
+<span>      <span class="fu">rowData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">[[</span><span class="va">fcol</span><span class="op">]</span><span class="op">]</span>, </span>
+<span>      <span class="fu">rowData</span><span class="op">(</span><span class="va">seNE</span><span class="op">)</span><span class="op">[[</span><span class="va">fcolNE</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co">#2.</span></span>
+<span>    <span class="va">idsMatch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">matchSeRowsToSeNERows</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">nf</span><span class="op">[</span><span class="va">idsMatch</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">seNE</span><span class="op">)</span><span class="op">[</span><span class="va">matchSeRowsToSeNERows</span><span class="op">[</span><span class="va">idsMatch</span><span class="op">]</span>, <span class="va">matchColsSeToseNE</span><span class="op">]</span> <span class="co">#3.</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">nf</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Here we</p>
+<ol style="list-style-type: decimal">
+<li>match the samples of the phosho enriched samples to these of the
+non-enriched assay.</li>
+<li>calculate the correction factors</li>
+<li>make a new assay with usages by sweeping out the log2 protein
+abundances from from the log2 precursor abundances.</li>
+</ol>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">matchedSamps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qf</span><span class="op">)</span><span class="op">$</span><span class="va">source</span>,<span class="fu">colData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">)</span><span class="op">$</span><span class="va">source</span><span class="op">)</span></span>
+<span><span class="va">nfLog</span> <span class="op">&lt;-</span> <span class="fu">calculate_usage_nfLog</span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="st">"ionsNorm"</span><span class="op">]</span><span class="op">]</span>, </span>
+<span>                               <span class="va">qfNE</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span>, </span>
+<span>                               fcol <span class="op">=</span> <span class="st">"Proteins"</span>, </span>
+<span>                               fcolNE <span class="op">=</span> <span class="st">"Proteins"</span>, </span>
+<span>                               matchColsSeToseNE <span class="op">=</span> <span class="va">matchedSamps</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rformassspectrometry.github.io/QFeatures/reference/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span> <span class="co">#4. Subtract log2 norm factor elementwise (MARGIN = 1:2)</span></span>
 <span>      <span class="va">qf</span>,</span>
 <span>      MARGIN <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span>,</span>
-<span>      STATS <span class="op">=</span> <span class="va">nf</span>,</span>
-<span>      i <span class="op">=</span> <span class="va">i_precursor</span>,</span>
-<span>      name <span class="op">=</span> <span class="va">name</span></span>
-<span>      <span class="op">)</span></span>
-<span>    <span class="va">match_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"match_"</span>,<span class="va">i_precursor</span>,<span class="st">"_to_"</span>,<span class="va">i_protein</span><span class="op">)</span></span>
-<span>    <span class="fu">rowData</span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="va">name</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[[</span><span class="va">match_name</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">match_precursor_to_protein_FC</span> </span>
-<span>    <span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/filterFeatures.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">qf</span>, i <span class="op">=</span> <span class="va">name</span>, filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"~ !is.na("</span>,<span class="va">match_name</span>,<span class="st">")"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span>      STATS <span class="op">=</span> <span class="va">nfLog</span>,</span>
+<span>      i <span class="op">=</span> <span class="st">"ionsNorm"</span>,</span>
+<span>      name <span class="op">=</span> <span class="st">"ionsUsage"</span></span>
+<span>      <span class="op">)</span></span></code></pre></div>
+<p>We only keep ions for which the usage can be calculated in at least
+10 samples.</p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">matchedSamps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qf</span><span class="op">)</span><span class="op">$</span><span class="va">source</span>,<span class="fu">colData</span><span class="op">(</span><span class="va">qfNE</span><span class="op">)</span><span class="op">$</span><span class="va">source</span><span class="op">)</span></span>
-<span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu">calculate_usage_paired</span><span class="op">(</span><span class="va">qf</span>, <span class="va">qfNE</span>, i_precursor <span class="op">=</span> <span class="st">"ionsNorm"</span>, i_protein <span class="op">=</span> <span class="st">"proteins"</span>, fcol_precursor <span class="op">=</span> <span class="st">"Proteins"</span>, fcol_protein <span class="op">=</span> <span class="st">"Proteins"</span>, name <span class="op">=</span> <span class="st">"ion_usage"</span>, match_cols_precursor_to_protein <span class="op">=</span> <span class="va">matchedSamps</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="st">"ionsUsage"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">qf</span>, i <span class="op">=</span> <span class="st">"ionsUsage"</span>, pNA <span class="op">=</span> <span class="op">(</span><span class="va">n</span> <span class="op">-</span> <span class="fl">10</span><span class="op">)</span> <span class="op">/</span> <span class="va">n</span><span class="op">)</span></span></code></pre></div>
+<p>We assess the distribution of the usages.</p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">qf</span><span class="op">[</span>, , <span class="st">"ion_usage"</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="co">#1.</span></span>
+<code class="sourceCode R"><span><span class="va">qf</span><span class="op">[</span>, , <span class="st">"ionsUsage"</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="co">#1.</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span>  <span class="co">#2. </span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -939,31 +992,52 @@ in the qf object.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html" class="external-link">geom_density</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"usage"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-52-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-53-1.png" class="r-plt" alt="" width="700"></p>
 <div class="section level3">
 <h3 id="model-estimation-2">Model Estimation<a class="anchor" aria-label="anchor" href="#model-estimation-2"></a>
 </h3>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/msqrob.html" class="external-link">msqrob</a></span><span class="op">(</span></span>
 <span>  <span class="va">qf</span>,</span>
-<span>  i <span class="op">=</span> <span class="st">"ion_usage"</span>,</span>
+<span>  i <span class="op">=</span> <span class="st">"ionsUsage"</span>,</span>
 <span>  formula <span class="op">=</span> <span class="va">model</span>,</span>
 <span>  robust <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>We assess the contrast for each phospho-precursor usage.</p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/hypothesisTest.html" class="external-link">hypothesisTest</a></span><span class="op">(</span><span class="va">qf</span>, i <span class="op">=</span> <span class="st">"ion_usage"</span>, contrast <span class="op">=</span> <span class="va">L</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/hypothesisTest.html" class="external-link">hypothesisTest</a></span><span class="op">(</span><span class="va">qf</span>, i <span class="op">=</span> <span class="st">"ionsUsage"</span>, contrast <span class="op">=</span> <span class="va">L</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>We extract the results table from the proteins summarised experiment
 in the qf object.</p>
 <div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inferencesIonUsage</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/msqrobCollect.html" class="external-link">msqrobCollect</a></span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="st">"ion_usage"</span><span class="op">]</span><span class="op">]</span>, <span class="va">L</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/msqrobCollect.html" class="external-link">msqrobCollect</a></span><span class="op">(</span><span class="va">qf</span><span class="op">[[</span><span class="st">"ionsUsage"</span><span class="op">]</span><span class="op">]</span>, <span class="va">L</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">volcanoplot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/plotVolcano.html" class="external-link">plotVolcano</a></span><span class="op">(</span><span class="va">inferencesIonUsage</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">contrast</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Ion Usage"</span><span class="op">)</span></span>
 <span><span class="va">volcanoplot</span></span></code></pre></div>
-<p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-56-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2_workshop_files/figure-html/unnamed-chunk-57-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">da</span> <span class="op">&lt;-</span> <span class="va">inferences</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">adjPval</span> <span class="op">&lt;</span> <span class="va">alpha</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">feature</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">du</span> <span class="op">&lt;-</span> <span class="va">inferencesIonUsage</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">adjPval</span> <span class="op">&lt;</span> <span class="va">alpha</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">feature</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="va">qf</span><span class="op">[</span>, , <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ionsNorm"</span>,<span class="st">"ionsUsage"</span><span class="op">)</span><span class="op">]</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span>  <span class="co">#2. </span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">da</span><span class="op">)</span></span>
+<span><span class="va">h</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">rowname</span> <span class="op">==</span> <span class="va">i</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">colname</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">value</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>group <span class="op">=</span> <span class="va">rowname</span><span class="op">)</span>, linewidth <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">condition</span>, shape <span class="op">=</span> <span class="va">subset</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">assay</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </div>
