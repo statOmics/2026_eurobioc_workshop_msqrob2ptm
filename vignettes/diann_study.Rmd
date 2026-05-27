@@ -1,0 +1,1446 @@
+---
+title: "Untitled"
+output: html_document
+date: "2026-05-26"
+---
+
+# Wrapup: Factorial design with two factors {-}
+
+```{r, echo = FALSE}
+source("R/knitr_setup.R")
+```
+
+# Background 
+
+With the PXD059421 data deposited on ProteomeXchange researchers study the molecular effects of dietary DINCH exposure, on the proteome, phosphoproteome and acetylome profiles of visceral (VIS) and subcutaneous (SC) adipose tissue in a model of diet-induced obesity in male and female C57BL/6N mice. This study includes data on visceral and subcutaneous adipose tissue of female and male mice that were either fed a standard plant-based diet (chow), a standard high-fat diet (HFD) or two HFD diets including doses of DINCH (4,500 ppm and 15,000 ppm). Three female and three male mice were used for each diet [@AldehoffEtAl2025].
+
+The data were downloaded from Pride and reprocessed using spectronaut. 
+Here, we will focus on the proteomics data from the visceral tissue of mice subjected to the low and high DINCH diet. 
+
+# Load packages
+
+We load the `msqrob2` package, along with additional packages for
+data manipulation and visualisation.
+
+```{r load_libraries}
+library("QFeatures")  
+library("dplyr") 
+library("tidyr")
+library("ggplot2")
+library("msqrob2")    
+library("stringr")
+library("ExploreModelMatrix")
+library("MsCoreUtils") 
+library("matrixStats")
+library("patchwork")
+library("kableExtra")
+library("ComplexHeatmap")
+library("purrr")
+library("tibble")
+library("scater")
+```
+
+# Data
+
+## Precursor table
+
+We load the output from Spectronaut parquet file. Can be file path to local file or url to file that lives on the web.
+
+```{r import_data}
+precursorFile = "~/Downloads/WholeProteome_DIANNreport.parquet"
+precursorFilePTM = "~/Downloads/Phosphoproteome_DIANNreport.parquet"
+```
+
+
+We can import the report.parquet file using the `read_parquet` function from the `arrow` package. 
+
+```{r}
+precursors <- arrow::read_parquet(precursorFile) # function from the arrow package
+precursorsPTM <- arrow::read_parquet(precursorFilePTM) # function from the arrow package
+#precursors <- data.table::fread(precursorFile) # For older versions the results are stored as tsv files. 
+```
+
+
+```{r}
+precursors <- precursors |> 
+  filter(!grepl("ProSer",Run)) |>
+  select(
+         Run, 
+         Precursor.Id, 
+         Modified.Sequence, 
+         Stripped.Sequence, 
+         Precursor.Charge, 
+         Protein.Group, 
+         Protein.Names,
+         Protein.Ids,
+         Genes,
+         Precursor.Quantity,
+         Precursor.Normalised,
+         Normalisation.Factor,
+         Ms1.Area,
+         Ms1.Normalised,
+         PG.MaxLFQ,
+         Q.Value, 
+         Lib.Q.Value,
+         PG.Q.Value,
+         Lib.PG.Q.Value,
+         Proteotypic,
+         Decoy, # Not available in older versions of DIA-NN
+         RT)
+precursorsPTM <- precursorsPTM |> 
+  filter(!grepl("ProSer",Run)) |>
+  select(
+         Run, 
+         Precursor.Id, 
+         Modified.Sequence, 
+         Stripped.Sequence, 
+         Precursor.Charge, 
+         Protein.Group, 
+         Protein.Names,
+         Protein.Ids,
+         Genes,
+         Precursor.Quantity,
+         Precursor.Normalised,
+         Normalisation.Factor,
+         Ms1.Area,
+         Ms1.Normalised,
+         PG.MaxLFQ,
+         Q.Value, 
+         Lib.Q.Value,
+         PG.Q.Value,
+         Lib.PG.Q.Value,
+         Proteotypic,
+         Decoy, # Not available in older versions of DIA-NN
+         RT)
+```
+
+Quick check on distribution of precursors MS2 intensities.
+
+```{r}
+precursors |> 
+  ggplot(aes(x = log2(Precursor.Quantity))) +
+  geom_density() +
+  theme_minimal()
+```
+
+```{r}
+precursorsPTM |> 
+  ggplot(aes(x = log2(Precursor.Quantity))) +
+  geom_density() +
+  theme_minimal()
+```
+
+Seems no imputation has been done. 
+
+## Sample annotation table
+
+The [sample annotation table](#sec-annotation_table)) is not available
+and can be generated from the run labels, as the researchers included information on the design in the filenames.
+
+```{r create_metadata}
+annot <- precursors |> 
+  dplyr::distinct(Run) |> 
+  separate(Run,into=c("order","strain","genotype","rep","type","tech"), sep="_",remove=FALSE) |>   
+  rename(runCol = Run) |> 
+  mutate(sampleId = paste0(genotype,rep)) |> 
+  arrange(sampleId)
+annot
+```
+
+```{r}
+annotPTM <- precursorsPTM |> 
+  dplyr::distinct(Run) |> 
+  separate(Run,into=c("order","strain","genotype","rep","type","tech"), sep="_",remove=FALSE) |>   
+  rename(runCol = Run) |> 
+  mutate(sampleId = paste0(genotype,rep)) |> 
+  arrange(sampleId)
+annotPTM
+```
+
+## Convert to QFeatures
+First, recall that the precursor table is file in long format. 
+Every quantitative column in the precursor table contains
+information for multiple runs. Therefore, the function split the table
+based on the run identifier, given by the `runCol` argument (for
+Spectronaut, that identifier is contained in `run`). 
+So, the
+`QFeatures` object after import will contain as many sets as there are
+runs. 
+Next, the function links the annotation table with the PSM data.
+To achieve this, the annotation table must contain a `runCol` column
+that provides the run identifier in which each sample has been
+acquired, and this information will be used to match the identifiers
+in the `Run` column of the precursor table. 
+
+Here, we will use the `Precursor.Quantity` column as quantification input. 
+
+We first combine the precursor and precursorPTM table in a list of QFeatures objects, which we subsequently reduce in one QFeatures object. 
+
+```{r}
+(qf <- list(
+  readQFeatures(assayData = precursors,  
+                              colData = annot,
+                              quantCols = "Precursor.Quantity",
+                              runCol = "Run",
+                              fnames = "Precursor.Id"),
+  readQFeatures(assayData = precursorsPTM,  
+                              colData = annotPTM,
+                              quantCols = "Precursor.Quantity",
+                              runCol = "Run",
+                              fnames = "Precursor.Id") 
+) |> purrr::reduce(c)
+)
+```
+
+
+# Data preprocessing{#sec-basic_preprocess}
+
+The data preprocessing workflow for DIA data is similar to the workflow for DDA-LFQ data, but there are suble differences as we start from precursor level data and have additional columns. 
+
+## Encoding missing values
+
+We first replace any zero in the quantitative data
+with an `NA`. 
+
+```{r}
+qf <- zeroIsNA(qf, names(qf))
+```
+
+Note that `msqrob2` can handle missing data without having to rely on
+hard-to-verify imputation assumptions, which is our general recommendation. However, `msqrob2` does not
+prevent users from using imputation, which can be performed with
+`impute()` from the `QFeatures` package. 
+
+## Precursor Filtering 
+
+Filtering removes low-quality and unreliable precursors that would otherwise introduce noise and artefacts in the data. 
+
+### Remove questionable identifications
+
+
+We apply standard filtering: 
+
+
+1. q-value threshold of 0.01 for the identification of precursors (`Q.Value`) and protein groups (`PG.Q.Value`). If the file is processed via matching between runs, it is also useful to filter on Lib.Q.Value and Lib.PG.Q.Value.
+
+2. Remove precursors that could not be mapped, i.e. when `Precursor.Id` column is an empty string.  
+
+3. Filter decoys, i.e. only keep precursors for which the `Decoy` column equals 0. (Note, that the `Decoy` column is not present in the output of older versions of DIA-NN)
+
+4. Keeping only proteotypic peptides, which map uniquely to a specific protein.
+
+
+
+```{r}
+qf <-  qf |>
+  filterFeatures(~ Q.Value <= 0.01 & #1.
+                     PG.Q.Value <= 0.01 &  #1.
+                     Lib.Q.Value <= 0.01 & #1.
+                     Lib.PG.Q.Value <= 0.01 & #1.
+                     Precursor.Id != "" & #2.
+                     Decoy == 0 & #3. (Note, that this filter is not available with previous versions of DIA-NN, as the report.tsv file did not include a Decoy column. So other strategies are needed if Decoys are in the output file.)
+                     Proteotypic == 1) #4.
+```
+
+
+Note, that it is important that the filtering criteria are not distorting the distribution of the test statistics in the downstream analysis for features that are non-DA. 
+It can be shown that filtering will not induce bias results when the filtering criterion is independent of test statistic. The criteria that we proposed above are all based on the results of the identification step, hence, they are independent of the downstream test statistics that will be used to prioritize DA proteins. 
+
+### Assay joining
+
+Up to now, the data from different runs were kept in separate assays. We can now join the normalised sets into an precursor set using joinAssays(). Sets are joined by stacking the columns (samples) in a matrix and rows (features) are matched according to a row identifier, here the `EG_PrecursorId`.
+We will store the result in the assay with name: `precursor`.
+
+```{r}
+qf <- joinAssays(
+  x = qf,
+  i = grep("Proteome",names(qf), value = TRUE),
+  fcol = "Precursor.Id",
+  name = "precursors"
+  )
+(qf <- joinAssays(
+  x = qf,
+  i = grep("Phospho",names(qf), value = TRUE),
+  fcol = "Precursor.Id",
+  name = "precursorsPTM"
+  )
+)
+```
+
+### Filtering: Remove highly missing precursors
+
+We keep peptides that were observed at last 6 times out of the $n
+= 24$ samples, so that we can estimate the peptide characteristics. 
+
+```{r}
+nObs <- 6
+n <- ncol(qf[["precursors"]])
+
+(qf <- filterNA(qf, i = c("precursors", "precursorsPTM"), pNA = (n - nObs) / n))
+```
+
+
+### Filter one-hit wonders
+
+Here, we remove proteins that can only be found by one peptide, as such proteins may not be trustworthy.
+
+1. We first calculate how many distinct peptides map to each protein group (`PG_ProteinGroups`). We use the stripped precursor sequence, i.e. sequence of the base peptide for this purpose. 
+
+2. We store this information in the row data of the precursors assay
+
+3. We filter precursors of one-hit wonder proteins.  
+
+We only do this for the proteins assay 
+
+```{r}
+# Filter for peptides per protein
+pepsPerProtDf <- qf[["precursors"]] |> 
+    rowData() |> 
+    data.frame() |>
+    dplyr::select("Stripped.Sequence", "Protein.Group") |>
+    group_by(Protein.Group) |>
+    mutate(pepsPerProt = Stripped.Sequence |>
+               unique() |> length()
+           ) #1.
+
+rowData(qf[["precursors"]])$pepsPerProt <- pepsPerProtDf$pepsPerProt #2. 
+
+qf <- filterFeatures(qf, 
+                              ~ pepsPerProt > 1, 
+                              keep = TRUE) #3.
+```
+
+## Log-transformation 
+
+
+We perform log2-transformation with `logTransform()` from the
+`QFeatures` package. We use `base = 2` and store the result in a new summarized experiment named `precursors_log`
+
+```{r}
+qf <- logTransform(qf, 
+                            base = 2, 
+                            i = "precursors", 
+                            name = "precursors_log")
+qf <- logTransform(qf, 
+                            base = 2, 
+                            i = "precursorsPTM", 
+                            name = "precursorsPTM_log")
+```
+
+## Normalisation {#sec-norm}
+
+
+```{r}
+qf[, , "precursors_log"] |> #1.
+  longForm(colvars = colnames(colData(qf))) |>  #2. 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + #3.
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  labs(subtitle = "precursors") +
+  theme_minimal()
+  
+qf[, , "precursorsPTM_log"] |> #1.
+  longForm(colvars = colnames(colData(qf))) |>  #2. 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + #3.
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  labs(subtitle = "PTM - precursors") +
+  theme_minimal()
+```
+Normalisation is required. For this dataset we use median of ratio normalisation because we noticed severe differences in compositionality see [Wrap-up normalisation](02-normalisation-wrapup.html). 
+
+```{r}
+qf <- sweep( #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
+  qf,
+  MARGIN = 2,
+  STATS = nfLogMedianOfRatios(qf,"precursors_log"),
+  i = "precursors_log",
+  name = "precursors_norm"
+)
+qf <- sweep( #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
+  qf,
+  MARGIN = 2,
+  STATS = nfLogMedianOfRatios(qf,"precursorsPTM_log"),
+  i = "precursorsPTM_log",
+  name = "precursorsPTM_norm"
+)
+```
+
+
+We explore the effect of the global normalisation in the subsequent plot. 
+
+Formally, the function applies the following operation on each sample
+$i$ across all precursors $p$:
+
+$$
+y_{ip}^{\text{norm}} = y_{ip} - \log_2(nf_i)
+$$
+
+with $y_ip$ the log2-transformed intensities and $nf_i$ the log2-transformed norm factor. Upon normalisation, we can see
+that the distribution of the $y_{ip}^{\text{norm}}$ nicely overlap (using the same code as above)
+
+```{r}
+qf[, , "precursors_norm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  labs(subtitle = "Median normalisation precursors") +
+  theme_minimal()
+qf[, , "precursorsPTM_norm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  labs(subtitle = "Median normalisation PTM precursors") +
+  theme_minimal()
+```
+
+We also explore the normalisation for the common precursors. 
+
+
+```{r}
+precursorsCommon <- assay(qf[, , "precursors_log"]) |> na.exclude() |> rownames()
+precursorCommonDens <- qf[precursorsCommon, , "precursors_norm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  theme_minimal() +
+   labs(subtitle = "Median normalised log2 precursor intensities (common)")
+precursorCommonDens
+precursorsCommonPTM <- assay(qf[, , "precursorsPTM_log"]) |> na.exclude() |> rownames()
+precursorCommonDensPTM <- qf[precursorsCommonPTM, , "precursorsPTM_norm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  theme_minimal() +
+   labs(subtitle = "Median normalised log2 precursor intensities (common)")
+precursorCommonDensPTM
+```
+
+## Summarisation
+
+Here, we summarise the precursor-level data into protein intensities using maxLFQ. 
+maxLFQ first calculates all pairwise log ratio's between samples only using their shared precursors.
+Particularly, it uses the median of the log ratio's between the shared precursors s, i.e. 
+$$r_{ij} = median(y_{sj}-y_{si})$$.  
+Hence, it first eliminates peptide effects. 
+It then estimates the summaries by solving 
+
+$$
+\sum_i\sum_j(y^{prot}_j - y^{prot}_i - r_ij)^2
+$$
+It is implemented in the `maxLFQ` function of the `iq` package. 
+
+`aggregateFeatures()` streamlines summarisation. It requires the name
+of a `rowData` column to group the precursors into proteins (or
+protein groups), here `PG_ProteinGroups`. We provide the summarisation
+approach through the `fun` argument. Other summarisation methods
+are available from the `MsCoreUtils` package, see `?aggregateFeatures`
+for a comprehensive list. The function will return a `QFeatures`
+object with a new set that we called `proteins`.
+
+```{r, warning=FALSE}
+(qf <- aggregateFeatures(
+  qf, i = "precursors_norm", 
+  name = "proteins",
+  fcol = "Protein.Group", 
+  fun = function(X) iq::maxLFQ(X)$estimate
+))
+```
+
+
+# Data exploration and QC regular assay
+
+Data exploration aims to highlight the main sources of variation in
+the data prior to data modelling and can pinpoint to outlying or
+off-behaving samples. 
+
+## Marginal distribution at precursor and protein level 
+
+
+```{r}
+precursorDens <- qf[, , "precursors_norm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  theme_minimal() +
+   labs(subtitle = "Median normalised log2 precursor intensities")
+precursorDens
+```
+
+```{r}
+qf[, , "precursors_norm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = sampleId,
+      y = value,
+      colour = genotype,
+      group = colname) +
+  xlab("sample") +
+  geom_boxplot() +
+  theme_minimal() +
+   labs(subtitle = "Median normalised log2 precursor intensities")
+```
+
+
+```{r}
+qf[, , "proteins"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = sampleId,
+      y = value,
+      colour = genotype,
+      group = colname) +
+  xlab("sample") +
+  geom_boxplot() +
+  theme_minimal() +
+   labs(subtitle = "log2 protein intensities (median normalised precursors)")
+```
+
+```{r}
+protDens <- qf[, , "proteins"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  theme_minimal() +
+   labs(subtitle = "log2 protein intensities (median normalised precursors)")
+protDens
+```
+
+## Charge state 
+
+```{r}
+qf[, , "precursors_norm"] |>
+  longForm(colvars = colnames(colData(qf)), rowvars = "Precursor.Charge") |>
+  as.data.frame() |>
+  filter(!is.na(value)) |>
+  filter(Precursor.Charge<=4) |> 
+ggplot(aes(x = sampleId)) +
+  geom_bar(aes(fill = factor(Precursor.Charge, levels = 4:1)),
+           colour = "black") +
+  labs(title = "Peptide types per sample",
+       x = "Sample",
+       fill = "Charge state") +
+  theme_bw()
+```
+
+## Identifications per sample 
+
+```{r}
+qf[,,"precursors_norm"] |> 
+  longForm(colvars = colnames(colData(qf)), 
+           rowvars= c("Precursor.Id", 
+                      "Protein.Group")) |>
+  data.frame() |>
+  filter(!is.na(value)) |>
+  group_by(genotype, sampleId) |>
+  summarise(Precursors = length(unique(Precursor.Id)),
+            `Protein Groups` = length(unique(Protein.Group))) |> 
+  pivot_longer(-(1:2),
+               names_to = "Feature",
+               values_to = "IDs") |> 
+  ggplot(aes(x = sampleId, y = IDs, fill = genotype)) +
+  geom_col() +
+  #scale_fill_observable() +
+  facet_wrap(~Feature,
+             scales = "free_y") +
+  labs(title = "Precursor and protein group identificiations per sample",
+       x = "Sample",
+       y = "Identifications") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90))
+
+```
+
+## Dimensionality reduction plot 
+
+A common approach for data exploration is to
+perform dimension reduction, such as Multi Dimensional Scaling (MDS).
+We will first extract the set to explore along the sample annotations
+(used for plot colouring).
+
+```{r}
+protMDS <- getWithColData(qf, "proteins") |> 
+  as("SingleCellExperiment") |> 
+  runMDS(exprs_values = 1) |> 
+  plotMDS(colour_by = "genotype") 
+protMDS
+```
+
+
+
+
+# Data exploration and QC PTM assay
+
+Data exploration aims to highlight the main sources of variation in
+the data prior to data modelling and can pinpoint to outlying or
+off-behaving samples. 
+
+## Marginal distribution at precursor and protein level 
+
+
+```{r}
+precursorDensPTM <- qf[, , "precursorsPTM_norm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  theme_minimal() +
+   labs(subtitle = "Median normalised log2 PTM precursor intensities")
+precursorDensPTM
+```
+
+```{r}
+qf[, , "precursorsPTM_norm"] |>
+  longForm(colvars = colnames(colData(qf))) |> 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + 
+  aes(x = sampleId,
+      y = value,
+      colour = genotype,
+      group = colname) +
+  xlab("sample") +
+  geom_boxplot() +
+  theme_minimal() +
+   labs(subtitle = "Median normalised log2 PTM precursor intensities")
+```
+
+
+## Charge state 
+
+```{r}
+qf[, , "precursorsPTM_norm"] |>
+  longForm(colvars = colnames(colData(qf)), rowvars = "Precursor.Charge") |>
+  as.data.frame() |>
+  filter(!is.na(value)) |>
+  filter(Precursor.Charge<=4) |> 
+ggplot(aes(x = sampleId)) +
+  geom_bar(aes(fill = factor(Precursor.Charge, levels = 4:1)),
+           colour = "black") +
+  labs(title = "Peptide types per sample",
+       x = "Sample",
+       fill = "Charge state") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+## Identifications per sample 
+
+```{r}
+qf[,,"precursorsPTM_norm"] |> 
+  longForm(colvars = colnames(colData(qf)), 
+           rowvars= c("Precursor.Id", 
+                      "Protein.Group")) |>
+  data.frame() |>
+  filter(!is.na(value)) |>
+  group_by(genotype, sampleId) |>
+  summarise(Precursors = length(unique(Precursor.Id)),
+            `Protein Groups` = length(unique(Protein.Group))) |> 
+  pivot_longer(-(1:2),
+               names_to = "Feature",
+               values_to = "IDs") |> 
+  ggplot(aes(x = sampleId, y = IDs, fill = genotype)) +
+  geom_col() +
+  #scale_fill_observable() +
+  facet_wrap(~Feature,
+             scales = "free_y") +
+  labs(title = "Precursor and protein group identificiations per PTM sample",
+       x = "Sample",
+       y = "Identifications") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(angle = 90))
+# Data Modeling (Robust Regression){#sec-modelling}
+```
+
+## Dimensionality reduction plot 
+
+A common approach for data exploration is to
+perform dimension reduction, such as Multi Dimensional Scaling (MDS).
+We will first extract the set to explore along the sample annotations
+(used for plot colouring).
+
+```{r}
+precursorPTMMDS <- getWithColData(qf, "precursorsPTM_norm") |> 
+  as("SingleCellExperiment") |> 
+  runMDS(exprs_values = 1) |> 
+  plotMDS(colour_by = "genotype") 
+precursorPTMMDS
+```
+
+# Data Modeling at protein-level (Robust Regression){#sec-modelling}
+
+## Model estimation
+
+1. We first define the model. We only have one source of variability in the experiment that we can model, i.e. the effect of the genotype. 
+
+2. We fit the model to each protein in the `proteins` summarised experiment of the QFeatures object `qf` using the msqrob function. 
+
+```{r warning=FALSE}
+model <- ~ genotype
+qf <- msqrob(
+  qf,
+  i = "proteins",
+  formula = model,
+  robust = TRUE)
+```
+
+We enabled M-estimation (`robust = TRUE`) for improved robustness
+against outliers. 
+
+## Inference
+
+We can now convert the research question "do the spike-in
+conditions affect the protein intensities?" into a statistical
+hypothesis. 
+
+In other words, we need to translate this question in a null and alternative hypothesis on a single model parameter or a linear combination of model parameters, which is also referred to with a [contrast](#sec-inference).
+
+To aid defining contrasts, we will visualise the experimental design using the `ExploreModelMatrix` package.
+
+```{r}
+
+vd <- ExploreModelMatrix::VisualizeDesign(
+    sampleData =  colData(qf),
+    designFormula = model,
+    textSizeFitted = 4
+)
+vd$plotlist
+```
+We have 2 interesting research questions related to the diet. 
+
+1. Is there an effect of diet in male mice / prioritise proteins that are DA between low and high diet for male mice
+2. Is there an effect of sex in high diet 
+
+Each of these contrasts can be translated in a log2 FC or a difference in log2 FC and can be estimated with one or a linear combination of the model parameters. 
+
+Below we define the contrast and construct the corresponding contrast matrix. 
+
+We can generate the null-hypothesess for all pairwise comparisons manually.
+However, here we will use the `createPairwiseContrasts` function in `msqrob2`.
+
+```{r define_H0}
+(allHypotheses <- createPairwiseContrasts(
+  model, colData(qf), "genotype"
+  )
+)
+```
+
+Based on these null hypothesis we now generate the contrast matrix with all
+three contrasts using the `makeContrast` function. Note, that experienced users
+can also define the contrast matrix, directly. 
+
+```{r make_contrasts}
+(L <- makeContrast(
+  allHypotheses,
+  parameterNames = colnames(vd$designmatrix)
+))
+```
+
+
+We assess the contrast for each protein. 
+
+```{r warning=FALSE}
+qf <- hypothesisTest(qf, i = "proteins", contrast = L, overwrite = TRUE)
+```
+
+We extract the results table from the `proteins` summarised experiment in the `qf` object. 
+
+```{r}
+inferences <- 
+  msqrobCollect(qf[["proteins"]], L)
+```
+
+## Report results
+
+We report the results using a results table, volcano plots and heatmaps. 
+
+### Results table
+
+We use the 5% nominal FDR level to report results 
+```{r}
+alpha <- 0.05
+```
+
+```{r}
+#| results: asis
+for (j in colnames(L)) {
+
+  inference <- inferences |> 
+    dplyr::filter(adjPval < alpha & contrast == j)
+
+  cat("**Median - Contrast:**", j, "= 0 (", nrow(inference),
+      "significant proteins)\n\n")
+
+  cat('<div style="max-height:300px; overflow-y:auto;">')
+
+  print(
+    kable(
+      inference |>
+        dplyr::arrange(pval) |>
+        dplyr::relocate(feature),
+      row.names = FALSE
+    )
+  )
+
+  cat('</div>')
+
+  cat("\n\n\n---\n\n")
+}
+```
+
+### Volcanoplots 
+
+```{r}
+volcanoplot <- plotVolcano(inferences) + 
+  facet_wrap(~contrast) + 
+  labs(title = "Protein-level")
+volcanoplot
+```
+
+
+
+```{r}
+inferences |> 
+  filter(adjPval < alpha) |> 
+  mutate(DA = sign(logFC) |> as.factor() |> recode("-1"= "down","1" = "up")) |>
+  group_by(contrast, DA) |> 
+  ggplot(aes(x = contrast)) +
+  geom_bar(aes(fill = factor(DA)),
+           colour = "black") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+### Heatmaps
+
+```{r}
+heatmaps <- lapply(colnames(L),
+                   function(contrast, se, alpha)
+                   {
+                     sig <- rowData(se)[[contrast]] |> 
+                       filter(adjPval < alpha) |> 
+                       rownames()
+                     quants <- t(scale(t(assay(se[sig,]))))
+                     colnames(quants) <- se$sampleId #specific to this dataset to get short colnames
+                     annotations <- columnAnnotation(
+                       group = se$genotype
+                       ) #3.
+                     set.seed(1234) ## annotation colours are randomly generated by default
+                     return(
+                       Heatmap(
+                       quants, 
+                       name = "log2 intensity",
+                       top_annotation = annotations, 
+                       column_title = paste0(contrast, " = 0")
+                       )
+                     )
+                   },
+                   se = getWithColData(qf, "proteins"),
+                   alpha = alpha)
+heatmaps
+```
+
+
+### Detail plots
+
+We can explore the data for a protein to validate the statistical inference results. For example, let’s explore the normalised precursor and the summarised protein intensities for the protein with the most significant log2 fold change.
+
+```{r}
+(target_feature <- inferences |> 
+   dplyr::slice(which.min(pval)) |> 
+   pull(feature)
+)
+inferences |> 
+  filter(feature == target_feature)
+```
+
+To obtain the required data, we perform a little data manipulation pipeline:
+
+We use the QFeatures subsetting functionality to retrieve all data related to and focusing on the peptides_log and proteins sets that contains the peptide ion data used for model fitting. We then convert the data with longForm() for plotting. Finally, we plot the log2 normalised intensities for each sample at the protein and at the peptide level. Since multiple peptides are recorded for the protein, we link peptides across samples using a grey line. Samples are colored according to E. coli spike-in condition.
+
+```{r}
+qf[target_feature, , c("precursors_log","precursors_norm", "proteins")] |> #1
+  longForm(colvars = colnames(colData(qf))) |> #2
+  data.frame() |> 
+  ggplot() +
+  aes(x = colname,
+      y = value) +
+  geom_line(aes(group = rowname), linewidth = 0.1) +
+  geom_point(aes(colour = genotype)) +
+  facet_wrap(~ assay, scales = "free") +
+  ggtitle(target_feature) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+```
+
+```{r}
+qf[target_feature, , c("precursors_log","precursors_norm", "proteins")] |> #1
+  longForm(colvars = colnames(colData(qf))) |> #2
+  data.frame() |>
+  filter(!is.na(value)) %>% 
+  {
+  ggplot(.) +
+  aes(x = genotype,
+      y = value) +
+  geom_boxplot(aes(colour = genotype)) +
+  facet_wrap(~ assay, scales = "free") +
+  geom_jitter(aes(shape = rowname)) +
+  scale_shape_manual(values = seq_len(dplyr::n_distinct(.$rowname))) +
+  ggtitle(target_feature) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank()) +
+  guides(shape = "none")
+  }
+```
+
+# Data Modeling at phospho-peptidoform-level (Robust Regression){#sec-modelling}
+
+## Model estimation
+
+1. We first define the model. We only have one sources of variability in the experiment that we can model, i.e. the effect of the spike-in condition. 
+
+2. We fit the model to each protein in the `proteins` summarised experiment of the QFeatures object `qf` using the msqrob function. 
+
+```{r warning=FALSE}
+qf <- msqrob(
+  qf,
+  i = "precursorsPTM_norm",
+  formula = model,
+  robust = TRUE)
+```
+
+We enabled M-estimation (`robust = TRUE`) for improved robustness
+against outliers. 
+
+## Inference
+
+We assess the contrast for each protein. 
+
+```{r warning=FALSE}
+qf <- hypothesisTest(qf, i = "precursorsPTM_norm", contrast = L, overwrite = TRUE)
+```
+
+We extract the results table from the `proteins` summarised experiment in the `qf` object. 
+
+```{r}
+inferencesPTM <- 
+  msqrobCollect(qf[["precursorsPTM_norm"]], L)
+```
+
+## Report results
+
+We report the results using a results table, volcano plots and heatmaps. 
+
+### Results table
+
+We use the 5% nominal FDR level to report results 
+```{r}
+alpha <- 0.05
+```
+
+
+```{r}
+#| results: asis
+for (j in colnames(L)) {
+
+  inference <- inferencesPTM |> 
+    dplyr::filter(adjPval < alpha & contrast == j)
+
+  cat("**Median - Contrast:**", j, "= 0 (", nrow(inference),
+      "significant proteins)\n\n")
+
+  cat('<div style="max-height:300px; overflow-y:auto;">')
+
+  print(
+    kable(
+      inference |>
+        dplyr::arrange(pval) |>
+        dplyr::relocate(feature),
+      row.names = FALSE
+    )
+  )
+
+  cat('</div>')
+
+  cat("\n\n\n---\n\n")
+}
+```
+
+### Volcanoplots 
+
+```{r}
+volcanoplotPTM <- plotVolcano(inferencesPTM) + 
+  facet_wrap(~contrast) + 
+  labs(title = "Median normalisation")
+volcanoplotPTM
+```
+
+
+```{r}
+inferencesPTM |> 
+  filter(adjPval < alpha) |> 
+  mutate(DA = sign(logFC) |> as.factor() |> recode("-1"= "down","1" = "up")) |>
+  group_by(contrast, DA) |> 
+  ggplot(aes(x = contrast)) +
+  geom_bar(aes(fill = factor(DA)),
+           colour = "black") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+### Heatmaps
+
+```{r}
+heatmaps <- lapply(colnames(L),
+                   function(contrast, se, alpha)
+                   {
+                     sig <- rowData(se)[[contrast]] |> 
+                       filter(adjPval < alpha) |> 
+                       rownames()
+                     quants <- t(scale(t(assay(se[sig,]))))
+                     colnames(quants) <- se$sampleId #specific to this dataset to get short colnames
+                     annotations <- columnAnnotation(
+                       group = se$genotype
+                       ) #3.
+                     set.seed(1234) ## annotation colours are randomly generated by default
+                     return(
+                       Heatmap(
+                       quants, 
+                       name = "log2 intensity",
+                       top_annotation = annotations, 
+                       column_title = paste0(contrast, " = 0")
+                       )
+                     )
+                   },
+                   se = getWithColData(qf, "precursorsPTM_norm"),
+                   alpha = alpha)
+heatmaps
+```
+
+
+### Detail plots
+
+We can explore the data for a protein to validate the statistical inference results. For example, let’s explore the normalised precursor and the summarised protein intensities for the protein with the most significant log2 fold change.
+
+```{r}
+(target_feature <- inferencesPTM |> 
+   dplyr::slice(which.min(pval)) |> 
+   pull(feature)
+)
+inferencesPTM |> 
+  filter(feature == target_feature)
+```
+
+To obtain the required data, we perform a little data manipulation pipeline:
+
+We use the QFeatures subsetting functionality to retrieve all data related to and focusing on the peptides_log and proteins sets that contains the peptide ion data used for model fitting. We then convert the data with longForm() for plotting. Finally, we plot the log2 normalised intensities for each sample at the protein and at the peptide level. Since multiple peptides are recorded for the protein, we link peptides across samples using a grey line. Samples are colored according to E. coli spike-in condition.
+
+```{r}
+qf[target_feature, , c("precursorsPTM_log","precursorsPTM_norm")] |> #1
+  longForm(colvars = colnames(colData(qf))) |> #2
+  data.frame() |> 
+  ggplot() +
+  aes(x = colname,
+      y = value) +
+  geom_line(aes(group = rowname), linewidth = 0.1) +
+  geom_point(aes(colour = genotype)) +
+  facet_wrap(~ assay, scales = "free") +
+  ggtitle(target_feature) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+```
+
+```{r}
+qf[target_feature, , c("precursorsPTM_log","precursorsPTM_norm")] |> #1
+  longForm(colvars = colnames(colData(qf))) |> #2
+  data.frame() |>
+  filter(!is.na(value)) %>% 
+  {
+  ggplot(.) +
+  aes(x = genotype,
+      y = value) +
+  geom_boxplot(aes(colour = genotype)) +
+  facet_wrap(~ assay, scales = "free") +
+  geom_jitter(aes(shape = rowname)) +
+  scale_shape_manual(values = seq_len(dplyr::n_distinct(.$rowname))) +
+  ggtitle(target_feature) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank()) +
+  guides(shape = "none")
+  }
+```
+
+
+# Usage (Robust Regression){#sec-modelling}
+
+```{r}
+calculate_usage_paired <- function(qf, i_precursor, i_protein = "proteins", fcol_precursor = "Protein.Group", fcol_protein = "Protein.Group", name = "precursors_usage", match_cols_precursor_to_protein = colnames(qf[[i_precursor]]))
+{
+    nf <- assay(qf[[i_precursor]])
+    nf[,] <- NA
+    match_precursor_to_protein_FC <- match(
+      rowData(qf[[i_precursor]])[[fcol_precursor]], 
+      rowData(qf[[i_protein]])[[fcol_protein]])
+    idsMatch <- which(!is.na(match_precursor_to_protein_FC))
+    nf[idsMatch, ] <- assay(qf[[i_protein]])[match_precursor_to_protein_FC[idsMatch], match_cols_precursor_to_protein]
+    
+    qf <- sweep( #4. Subtract log2 norm factor elementwise (MARGIN = 1:2)
+      qf,
+      MARGIN = 1:2,
+      STATS = nf,
+      i = i_precursor,
+      name = name
+      )
+    match_name <- paste0("match_",i_precursor,"_to_",i_protein)
+    rowData(qf[[name]])[[match_name]] <- match_precursor_to_protein_FC 
+    qf <- filterFeatures(qf, i = name, filter = formula(paste0("~ !is.na(",match_name,")")))
+}
+```
+
+```{r}
+qf <- calculate_usage_paired(qf, i_precursor = "precursorsPTM_norm", i_protein = "proteins", fcol_precursor = "Protein.Group", fcol_protein = "Protein.Group", name = "usage", match_cols_precursor_to_protein = 1:ncol(qf[["precursorsPTM_norm"]]))
+```
+
+```{r}
+qf[, , "usage"] |> #1.
+  longForm(colvars = colnames(colData(qf))) |>  #2. 
+  data.frame() |> 
+  filter(!is.na(value)) |>
+  ggplot() + #3.
+  aes(x = value,
+      colour = genotype,
+      group = colname) +
+  geom_density() +
+  labs(subtitle = "usage") +
+  theme_minimal()
+```
+## Model estimation
+
+
+```{r warning=FALSE}
+qf <- msqrob(
+  qf,
+  i = "usage",
+  formula = model,
+  robust = TRUE,
+  overwrite = TRUE)
+```
+
+We enabled M-estimation (`robust = TRUE`) for improved robustness
+against outliers. 
+
+## Inference
+
+
+We assess the contrast for each precursor. 
+
+```{r warning=FALSE}
+qf <- hypothesisTest(qf, i = "usage", contrast = L, overwrite = TRUE)
+```
+
+We extract the results table from the `proteins` summarised experiment in the `qf` object. 
+
+```{r}
+inferencesUsage <- 
+  msqrobCollect(qf[["usage"]], L)
+```
+
+## Report results
+
+We report the results using a results table, volcano plots and heatmaps. 
+
+### Results table
+
+We use the 5% nominal FDR level to report results 
+```{r}
+alpha <- 0.05
+```
+
+```{r}
+#| results: asis
+for (j in colnames(L)) {
+
+  inference <- inferencesUsage |> 
+    dplyr::filter(adjPval < alpha & contrast == j)
+
+  cat("**Median - Contrast:**", j, "= 0 (", nrow(inference),
+      "significant proteins)\n\n")
+
+  cat('<div style="max-height:300px; overflow-y:auto;">')
+
+  print(
+    kable(
+      inference |>
+        dplyr::arrange(pval) |>
+        dplyr::relocate(feature),
+      row.names = FALSE
+    )
+  )
+
+  cat('</div>')
+
+  cat("\n\n\n---\n\n")
+}
+```
+
+### Volcanoplots 
+
+```{r}
+volcanoplot <- plotVolcano(inferencesUsage) + 
+  facet_wrap(~contrast) + 
+  labs(title = "Usage")
+volcanoplot
+```
+
+
+```{r}
+inferencesUsage |> 
+  filter(adjPval < alpha) |> 
+  mutate(DA = sign(logFC) |> as.factor() |> recode("-1"= "down","1" = "up")) |>
+  group_by(contrast, DA) |> 
+  ggplot(aes(x = contrast)) +
+  geom_bar(aes(fill = factor(DA)),
+           colour = "black") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+### Heatmaps
+
+```{r}
+heatmaps <- lapply(colnames(L),
+                   function(contrast, se, alpha)
+                   {
+                     sig <- rowData(se)[[contrast]] |>
+                       filter(adjPval < alpha) |>
+                       rownames()
+                     quants <- t(scale(t(assay(se[sig,]))))
+                     colnames(quants) <- se$sampleId #specific to this dataset to get short colnames
+                     annotations <- columnAnnotation(
+                       group = se$genotype
+                       ) #3.
+                     set.seed(1234) ## annotation colours are randomly generated by default
+                     return(
+                       Heatmap(
+                       quants,
+                       name = "log2 intensity",
+                       top_annotation = annotations,
+                       column_title = paste0(contrast, " = 0")
+                       )
+                     )
+                   },
+                   se = getWithColData(qf, "usage"),
+                   alpha = alpha)
+heatmaps
+```
+
+### Detail plots
+
+We can explore the data for a protein to validate the statistical inference results. For example, let’s explore the normalised precursor and the summarised protein intensities for the protein with the most significant log2 fold change.
+
+```{r}
+(target_feature <- inferencesUsage |> 
+   dplyr::slice(which.min(pval)) |> 
+   pull(feature)
+)
+inferencesUsage |> 
+  filter(feature == target_feature)
+```
+
+To obtain the required data, we perform a little data manipulation pipeline:
+
+We use the QFeatures subsetting functionality to retrieve all data related to and focusing on the peptides_log and proteins sets that contains the peptide ion data used for model fitting. We then convert the data with longForm() for plotting. Finally, we plot the log2 normalised intensities for each sample at the protein and at the peptide level. Since multiple peptides are recorded for the protein, we link peptides across samples using a grey line. Samples are colored according to E. coli spike-in condition.
+
+```{r}
+ptm <-  qf[target_feature, , c("precursorsPTM_norm", "usage")] |> #1
+  longForm(colvars = colnames(colData(qf)), rowvars = "Protein.Group") |> #2
+  data.frame()
+protein <- qf[unique(ptm$Protein.Group), , c("proteins")] |> #1
+  longForm(colvars = colnames(colData(qf)), rowvars = "Protein.Group") |> #2
+  data.frame()
+
+
+ptm_protein <- rbind(ptm, protein)
+ylims <- ptm_protein |> 
+  group_by(assay) |> 
+  summarise(cent = mean(range(value,na.rm=TRUE)), ampl = diff(range(value,na.rm=TRUE))) |> 
+  mutate(lower = cent - max(ampl)/2, 
+         upper = cent + max(ampl)/2) |> 
+  select(-c(cent, ampl))
+
+outplot <- ptm_protein |>
+  ggplot() +
+  aes(x = colname,
+      y = value) +
+  geom_line(aes(group = rowname), linewidth = 0.1) +
+  geom_point(aes(colour = genotype)) +
+  facet_wrap(~ assay, scales = "free") +
+  ggh4x::facetted_pos_scales(
+    y = list(
+      assay == ylims$assay[1] ~ scale_y_continuous(limits = unlist(ylims[1,c("lower","upper")])),
+      assay == ylims$assay[2] ~ scale_y_continuous(limits = unlist(ylims[2,c("lower","upper")])),
+      assay == ylims$assay[3] ~ scale_y_continuous(limits = unlist(ylims[3,c("lower","upper")]))
+    )
+    ) +
+  labs(subtitle = paste(target_feature, "\n padj PTM =", inferencesPTM |> filter(feature == target_feature) |> pull(adjPval) |> round(digits = 3), ", padj usage =", inferencesUsage |> filter(feature == target_feature) |> pull(adjPval) |> round(digits = 3))) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+print(outplot)
+```
+
+```{r}
+rbind(ptm, protein) %>%
+  {
+  ggplot(.) +
+  aes(x = genotype,
+      y = value) +
+  geom_boxplot(aes(colour = genotype)) +
+  facet_wrap(~ assay, scales = "free") +
+  geom_jitter(aes(shape = rowname)) +
+  scale_shape_manual(values = seq_len(dplyr::n_distinct(.$rowname))) +
+  ggtitle(target_feature) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank()) +
+  guides(shape = "none")
+  }
+```
+
+
+```{r}
+for (i in 1:10){
+target_feature <- inferencesPTM |> 
+  filter(feature %in% inferencesUsage$feature) |>
+  filter(contrast == colnames(L)[1]) |>
+  arrange(pval) |> 
+  pull(feature)
+target_feature <- target_feature[i]
+
+ptm <-  qf[target_feature, , c("precursorsPTM_norm", "usage")] |> #1
+  longForm(colvars = colnames(colData(qf)), rowvars = "Protein.Group") |> #2
+  data.frame()
+protein <- qf[unique(ptm$Protein.Group), , c("proteins")] |> #1
+  longForm(colvars = colnames(colData(qf)), rowvars = "Protein.Group") |> #2
+  data.frame()
+
+
+ptm_protein <- rbind(ptm, protein)
+ylims <- ptm_protein |> 
+  group_by(assay) |> 
+  summarise(cent = mean(range(value,na.rm=TRUE)), ampl = diff(range(value,na.rm=TRUE))) |> 
+  mutate(lower = cent - max(ampl)/2, 
+         upper = cent + max(ampl)/2) |> 
+  select(-c(cent, ampl))
+
+outplot <- ptm_protein |>
+  ggplot() +
+  aes(x = colname,
+      y = value) +
+  geom_line(aes(group = rowname), linewidth = 0.1) +
+  geom_point(aes(colour = genotype)) +
+  facet_wrap(~ assay, scales = "free") +
+  ggh4x::facetted_pos_scales(
+    y = list(
+      assay == ylims$assay[1] ~ scale_y_continuous(limits = unlist(ylims[1,c("lower","upper")])),
+      assay == ylims$assay[2] ~ scale_y_continuous(limits = unlist(ylims[2,c("lower","upper")])),
+      assay == ylims$assay[3] ~ scale_y_continuous(limits = unlist(ylims[3,c("lower","upper")]))
+    )
+    ) +
+  labs(subtitle = paste(target_feature, "\n padj PTM =", inferencesPTM |> filter(feature == target_feature) |> pull(adjPval) |> round(digits = 3), ", padj usage =", inferencesUsage |> filter(feature == target_feature) |> pull(adjPval) |> round(digits = 3))) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+print(outplot)
+}
+```
+
+
+
+```{r}
+for (i in 1:10){
+target_feature <- inferencesUsage |> 
+  filter(contrast == colnames(L)[1]) |>
+  arrange(pval) |> 
+  pull(feature)
+target_feature <- target_feature[i]
+
+ptm <-  qf[target_feature, , c("precursorsPTM_norm", "usage")] |> #1
+  longForm(colvars = colnames(colData(qf)), rowvars = "Protein.Group") |> #2
+  data.frame()
+protein <- qf[unique(ptm$Protein.Group), , c("proteins")] |> #1
+  longForm(colvars = colnames(colData(qf)), rowvars = "Protein.Group") |> #2
+  data.frame()
+
+
+ptm_protein <- rbind(ptm, protein)
+ylims <- ptm_protein |> 
+  group_by(assay) |> 
+  summarise(cent = mean(range(value,na.rm=TRUE)), ampl = diff(range(value,na.rm=TRUE))) |> 
+  mutate(lower = cent - max(ampl)/2, 
+         upper = cent + max(ampl)/2) |> 
+  select(-c(cent, ampl))
+
+outplot <- ptm_protein |>
+  ggplot() +
+  aes(x = colname,
+      y = value) +
+  geom_line(aes(group = rowname), linewidth = 0.1) +
+  geom_point(aes(colour = genotype)) +
+  facet_wrap(~ assay, scales = "free") +
+  ggh4x::facetted_pos_scales(
+    y = list(
+      assay == ylims$assay[1] ~ scale_y_continuous(limits = unlist(ylims[1,c("lower","upper")])),
+      assay == ylims$assay[2] ~ scale_y_continuous(limits = unlist(ylims[2,c("lower","upper")])),
+      assay == ylims$assay[3] ~ scale_y_continuous(limits = unlist(ylims[3,c("lower","upper")]))
+    )
+    ) +
+  labs(subtitle = paste(target_feature, "\n padj PTM =", inferencesPTM |> filter(feature == target_feature) |> pull(adjPval) |> round(digits = 3), ", padj usage =", inferencesUsage |> filter(feature == target_feature) |> pull(adjPval) |> round(digits = 3))) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+print(outplot)
+}
+```

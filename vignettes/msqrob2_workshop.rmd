@@ -662,38 +662,83 @@ volcanoplot
 
 # Peptidoform usage
 
+We can calculate the usages for every precursor ion by subtracting the 
+corresponding log-transformed protein level abundance values from the log2 
+transformed and normalized precursor ion intensities. 
+
+We first develop a function that will extract the corresponding protein level 
+abundance values. 
+It has following inputs: 
+
+- `se`: summarised experiment of the log2-transformed and normalized precursor ion 
+- `seNE`: summarised experiment of the log2-transformed, normalized and aggregated 
+  protein level abundances. 
+- `fcol`: annotation column with protein name for the precursor ions
+- `fcolNE`: annotation column with protein name for the protein level abundances
+- `matchColsSeToseNE`: a vector that matches the columns of `seNE` to these in 
+  `se`. 
+
+The function 
+
+1. initiates the matrix with log2 tranformed correction factors at NA. 
+2. Matches the rows of se with these of seNE using the annotation columns
+3. Extracts the protein abundance values for the precursors from the matching 
+  rows and columns in the protein level assay.
+  
 ```{r}
-calculate_usage_paired <- function(qf, qfNE, i_precursor, i_protein = "proteins", fcol_precursor = "Proteins", fcol_protein = "Proteins", name = "ion_usage", match_cols_precursor_to_protein = colnames(qf[[i_precursor]]))
+calculate_usage_nfLog <- function(se, 
+                               seNE, 
+                               fcol = "Proteins", 
+                               fcolNE = "Proteins", 
+                               matchColsSeToseNE = colnames(se)
+                               )
 {
-    nf <- assay(qf[[i_precursor]])
-    nf[,] <- NA
-    match_precursor_to_protein_FC <- match(
-      rowData(qf[[i_precursor]])[[fcol_precursor]], 
-      rowData(qfNE[[i_protein]])[[fcol_protein]])
-    idsMatch <- which(!is.na(match_precursor_to_protein_FC))
-    nf[idsMatch, ] <- assay(qfNE[[i_protein]])[match_precursor_to_protein_FC[idsMatch], match_cols_precursor_to_protein]
-    
-    qf <- sweep( #4. Subtract log2 norm factor elementwise (MARGIN = 1:2)
-      qf,
-      MARGIN = 1:2,
-      STATS = nf,
-      i = i_precursor,
-      name = name
-      )
-    match_name <- paste0("match_",i_precursor,"_to_",i_protein)
-    rowData(qf[[name]])[[match_name]] <- match_precursor_to_protein_FC 
-    qf <- filterFeatures(qf, i = name, filter = formula(paste0("~ !is.na(",match_name,")")))
+    nf <- assay(se); nf[,] <- NA #1. 
+    matchSeRowsToSeNERows <- match(
+      rowData(se)[[fcol]], 
+      rowData(seNE)[[fcolNE]]) #2.
+    idsMatch <- which(!is.na(matchSeRowsToSeNERows))
+    nf[idsMatch, ] <- assay(seNE)[matchSeRowsToSeNERows[idsMatch], matchColsSeToseNE] #3.
+    return(nf)
 }
 ```
 
+Here we 
+
+1. match the samples of the phosho enriched samples to these of the 
+non-enriched assay. 
+2. calculate the correction factors 
+3. make a new assay with usages by sweeping out the log2 protein abundances from 
+   from the log2 precursor abundances.   
+   
 ```{r}
 matchedSamps <- match(colData(qf)$source,colData(qfNE)$source)
-qf <- calculate_usage_paired(qf, qfNE, i_precursor = "ionsNorm", i_protein = "proteins", fcol_precursor = "Proteins", fcol_protein = "Proteins", name = "ion_usage", match_cols_precursor_to_protein = matchedSamps)
+nfLog <- calculate_usage_nfLog(qf[["ionsNorm"]], 
+                               qfNE[["proteins"]], 
+                               fcol = "Proteins", 
+                               fcolNE = "Proteins", 
+                               matchColsSeToseNE = matchedSamps)
 
+qf <- sweep( #4. Subtract log2 norm factor elementwise (MARGIN = 1:2)
+      qf,
+      MARGIN = 1:2,
+      STATS = nfLog,
+      i = "ionsNorm",
+      name = "ionsUsage"
+      )
 ```
 
+We only keep ions for which the usage can be calculated in at least 10 samples. 
+
 ```{r}
-qf[, , "ion_usage"] |> #1.
+n <- ncol(qf[["ionsUsage"]])
+qf <- filterNA(qf, i = "ionsUsage", pNA = (n - 10) / n)
+```
+
+We assess the distribution of the usages. 
+
+```{r}
+qf[, , "ionsUsage"] |> #1.
   longForm(colvars = colnames(colData(qf))) |>  #2. 
   data.frame() |> 
   filter(!is.na(value)) |>
@@ -711,7 +756,7 @@ qf[, , "ion_usage"] |> #1.
 ```{r warning=FALSE}
 qf <- msqrob(
   qf,
-  i = "ion_usage",
+  i = "ionsUsage",
   formula = model,
   robust = TRUE,
   overwrite = TRUE)
@@ -720,14 +765,14 @@ qf <- msqrob(
 We assess the contrast for each phospho-precursor usage.
 
 ```{r}
-qf <- hypothesisTest(qf, i = "ion_usage", contrast = L, overwrite = TRUE)
+qf <- hypothesisTest(qf, i = "ionsUsage", contrast = L, overwrite = TRUE)
 ```
 
 We extract the results table from the proteins summarised experiment in the qf object.
 
 ```{r}
 inferencesIonUsage <- 
-  msqrobCollect(qf[["ion_usage"]], L)
+  msqrobCollect(qf[["ionsUsage"]], L)
 ```
 
 ```{r}
@@ -735,4 +780,30 @@ volcanoplot <- plotVolcano(inferencesIonUsage) +
   facet_wrap(~contrast) + 
   labs(title = "Ion Usage")
 volcanoplot
+```
+
+```{r}
+da <- inferences |> filter(adjPval < alpha) |> pull(feature) |> unique()
+du <- inferencesIonUsage |> filter(adjPval < alpha) |> pull(feature) |> unique()
+```
+
+```{r}
+h <- qf[, , c("ionsNorm","ionsUsage")] |> 
+  longForm(colvars = colnames(colData(qf))) |>  #2. 
+  data.frame() |> 
+  filter(!is.na(value)) 
+
+for (i in da)
+h |> 
+  filter(rowname == i) |> 
+  data.frame() |> 
+  ggplot() +
+  aes(x = colname,
+      y = value) +
+  geom_line(aes(group = rowname), linewidth = 0.1) +
+  geom_point(aes(colour = condition, shape = subset)) +
+  facet_wrap(~ assay, scales = "free") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+
 ```
