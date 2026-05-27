@@ -904,11 +904,11 @@ We use the 5% nominal FDR level to report results
 alpha <- 0.05
 ```
 
-```{r}
+```{r inference_tables_PTM}
 #| results: asis
 for (j in colnames(L)) {
 
-  inferencePTM <- inferencesPTM |> 
+  inference <- inferencesPTM |> 
     dplyr::filter(adjPval < alpha & contrast == j)
 
   cat("**Median - Contrast:**", j, "= 0 (", nrow(inference),
@@ -1149,7 +1149,7 @@ We notice that many proteins are DA at the nominal 5% FDR-level.
 
 ### Heatmaps
 
-```{r precursor_da_heatmaps}
+```{r precursor_da_heatmaps_ne}
 heatmaps <- lapply(colnames(L),
                    function(contrast, se, alpha)
                    {
@@ -1642,7 +1642,7 @@ We compare the intensities for the top 5 DA phospo-precursors for the first
 contrast to these of their corresponding protein in the non-enriched assay and
 to the usages. 
  
-```{r comparison_plots, warning = FALSE, message = FALSE}
+```{r comparison_plots_top5, warning = FALSE, message = FALSE}
 contr = colnames(L)[1]
 top5 <- inferencesPTM |> 
   filter(contrast == contr) |> 
@@ -1708,7 +1708,7 @@ We compare the intensities for the top 5 DU phospo-precursors for the first
 contrast to these of their corresponding protein in the non-enriched assay and
 to their unadjusted abundances. 
  
-```{r comparison_plots, warning = FALSE, message = FALSE}
+```{r comparison_plots_top5_DU, warning = FALSE, message = FALSE}
 contr = colnames(L)[1]
 top5 <- inferencesUsage |> 
   filter(contrast == contr) |> 
