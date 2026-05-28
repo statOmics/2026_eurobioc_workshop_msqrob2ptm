@@ -2,8 +2,8 @@ pandoc: 3.9.0.2
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  diann_study: diann_study.html
-last_built: 2026-05-28T13:29Z
+  msqrob2PTM_diann_study: msqrob2PTM_diann_study.html
+last_built: 2026-05-28T17:09Z
 urls:
   reference: https://statOmics.github.io/2026_eurobioc_workshop_msqrob2ptm/reference
   article: https://statOmics.github.io/2026_eurobioc_workshop_msqrob2ptm/articles
