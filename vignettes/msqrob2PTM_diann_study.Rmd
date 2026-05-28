@@ -28,10 +28,11 @@ In this vignette we start from quantified precursor level data to infer
 - DA at the protein level
 - Differential usage of precursors, i.e. 
   DA of precursors upon correction for DA at protein level
-- Differential usage of PTMs, i.e. upon summarising all precursors that cary a 
-  the same PTM at a specific residue (position in the protein) using
-  
-the msqrob2PTM workflow in the bioconductor package [msqrob2](https://www.bioconductor.org/packages/release/bioc/html/msqrob2.html). 
+- Differential usage of PTMs, i.e. upon summarising the usages for all 
+  precursors that carry the same PTM at a specific residue (position in 
+  the protein), 
+
+using the msqrob2PTM workflow in the bioconductor package [msqrob2](https://www.bioconductor.org/packages/release/bioc/html/msqrob2.html). 
 
 You can read more about 
 - `msqrob2` on [https://statomics.github.io/msqrob2book/](https://statomics.github.io/msqrob2book/) 
@@ -67,13 +68,7 @@ On the other hand, the ion mass fingerprint, called the MS2 spectrum,
 enables computational identification of the corresponding peptide
 using search engines (e.g. Andromeda has been used for this data set)
 that will provide peptide-to-spectrum matches (PSM). The quantified
-PSM are further processed by the software (MaxQuant) to obtain a
-peptide table^[MaxQuant also computes a protein table. However, we
-found that starting from MaxQuant's protein table leads to a decrease
-in performance. We will illustrate in this tutorial how to build the
-protein table.], where every row corresponds to an identified peptide
-and every column contains information about the peptide and its
-quantification in one of the samples.
+PSM are further processed by a search engine, e.g. MaxQuant.
 
 ```{r, echo = FALSE, out.width = "60%", fig.cap = "Overview of an LFQ-based proteomics workflow."}
 knitr::include_graphics("figs/lfq_workflow.png")
@@ -97,8 +92,13 @@ $\rightarrow$ Unbalanced pepide identifications across samples and messy data
 
 With data independent acquisition, however, the second round
 of MS (MS2) does not record fragmented ions for selected ions. 
-Instead the instrument divides the m/z range into sequential windows (e.g., 400–425, 425–450 m/z) and all ions within each window are fragmented together. This continues across the full mass range resulting in a 
-systematic fragmentation of all peptides. Hence, the MS2 spectra are complex as many peptides mixed. So search engines and quantification software, such as DIA-NN and Spectronaut, have to deconvolute the complex MS2 spectra so as to identify and quantify individual precursors (MS1) in the m/z window using their MS2 fragments. 
+Instead the instrument divides the m/z range into sequential windows (e.g., 
+400–425, 425–450 m/z) and all ions within each window are fragmented together. 
+This continues across the full mass range resulting in a systematic fragmentation 
+of all peptides. Hence, the MS2 spectra are complex as many peptides mixed. So 
+search engines and quantification software, such as DIA-NN and Spectronaut, have 
+to deconvolute the complex MS2 spectra so as to identify and quantify individual 
+precursors (MS1) in the m/z window using their MS2 fragments. 
 Hence, the quantification can be done using either MS1 or MS2.
 
 ![](https://www.creative-proteomics.com/blog/wp-content/uploads/2024/01/principles-applications-and-comparative-workflow-of-dia-and-dda.jpg)
@@ -127,6 +127,13 @@ knitr::include_graphics("./figs/challenges_peptides.png")
 ```{r echo=FALSE}
 knitr::include_graphics("./figs/challenges_proteins.png")
 ```
+
+
+Here, we will also quantify directly at the precursor level because we are 
+interested in DA and DU of precursors that carry phosphorylations.
+
+Moreover, we will also aggregate all precursors that carry a PTM on the same 
+residue of the protein to infer PTM DA and DU. 
 
 
 ## Challenges{#sec-dia_challenges}
@@ -192,8 +199,10 @@ PRIDE, dataset identifiers PXD068388 and PXD068392).
 
 Summary: 
 
-- Mutations in tRNAs can lead to mis-incorporation of an amino acid
-- 4 strains: WT, Pro -> Ala, Pro -> Ser and Arg -> Ser strains. (We remove)
+- Mutations in tRNAs can lead to mis-incorporation of amino acids during protein 
+  translation.
+- 4 strains: WT, 3 strains with mutations leading to miss-incorporations 
+  (Pro -> Ala, Pro -> Ser and Arg -> Ser).
 - 6 biological repeats per strain
 - For each biological repeat: non-enriched and phospho-enriched MS run. 
 
@@ -232,13 +241,14 @@ library("BiocFileCache")
 
 ### Precursor table
 
-We load the output from DIA-NN parquet files. Can be file path to local file or 
-url to file that lives on the web.
-Here we use BiocFileCache so that we do not need to download the files again each 
+- We load the output from DIA-NN parquet files. 
+- Can be file path to local file or url to file that lives on the web.
+- Here we use BiocFileCache so that we do not need to download the files again each 
 time that the script is knit. 
-Typically we do not specify the path to the cache file in local sessions. 
-Because we already cached the files in the docker, we specifically point to 
-the directory (`/opt/fileCache`).
+- Typically we do not specify the path to the cache file in local sessions. 
+- In this vignette we exceptionally do this because we already cached the files 
+  in the docker, so we specifically point to this cache directory 
+  (`/opt/fileCache`).
 
 ```{r data_path}
 bfc <- BiocFileCache("/opt/fileCache")
@@ -247,7 +257,8 @@ precursorFilePTM <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/Phos
 ```
 
 
-We can import the report.parquet file using the `read_parquet` function from the `arrow` package. 
+We can import the report.parquet file using the `read_parquet` function from the 
+`arrow` package. 
 
 ```{r data_import}
 precursors <- arrow::read_parquet(precursorFile) # function from the arrow package
@@ -255,10 +266,13 @@ precursorsPTM <- arrow::read_parquet(precursorFilePTM) # function from the arrow
 #precursors <- data.table::fread(precursorFile) # For older versions the results are stored as tsv files. 
 ```
 
-We subset the precursor files using only the variables that we need. Note that 
-`Protein.Sites` refers to the exact modified residue position in the full 
+We subset the precursor files to reduce the memory footprint and only keep the 
+variables that we need in the downstream analysis. 
+
+Note that `Protein.Sites` refers to the exact modified residue position in the full 
 protein sequence, which will be useful when assessing PTM-level quantification. 
-Note, that we filter out the strain with the ProSer variant here. 
+
+Note, that we also filter out the strain with the ProSer variant here. 
 
 ```{r data_subset}
 precursors <- precursors |> 
@@ -323,9 +337,9 @@ gc(); gc()
 
 ### Subset phospho
 
-In DIA-NN phosphorylation is indicated with (UniMod:21) in variable 
-`Modified.Sequence`, which contains the precursor sequence along with its 
-modifications. 
+In DIA-NN phosphorylation is indicated with (UniMod:21) in the sequence stored in 
+variable `Modified.Sequence`. This variable contains the precursor sequence 
+along with its modifications. 
 
 Here, we only keep precursors that are phosphorylated. 
 
@@ -333,6 +347,7 @@ Here, we only keep precursors that are phosphorylated.
 precursorsPTM <- precursorsPTM |>
   filter(grepl(pattern = "\\(UniMod:21\\)", Modified.Sequence))
 ```
+
 Garbage collection to free space 
 
 ```{r}
@@ -458,7 +473,12 @@ Here, we will use the `Precursor.Quantity` column as quantification input.
 
 1. We first combine the precursor and precursorPTM table in a list of 
 QFeatures objects, 
-2. which we subsequently reduce in one QFeatures object. 
+2. which we subsequently reduce in one QFeatures object. Note that in 
+QFeatures, the function `c()` is defined to merge QFeatures objects, stacking 
+all assays together into a single object.
+
+This allows us to store the data of the phospho-enriched and the non-enriched 
+samples in the same QFeatures `object`.
 
 ```{r import_qfeatures}
 (qf <- list(
@@ -494,7 +514,7 @@ Here we conduct the following processing steps
 2. Precursor filtering and assay joining
 3. Log-transformation
 4. Normalisation
-4. Summarisation for non-enriched runs 
+5. Summarisation for non-enriched runs 
 
 ## Encoding missing values
 
@@ -506,9 +526,9 @@ qf <- zeroIsNA(qf, names(qf))
 ```
 
 Note that `msqrob2` can handle missing data without having to rely on
-hard-to-verify imputation assumptions, which is our general recommendation. However, `msqrob2` does not
-prevent users from using imputation, which can be performed with
-`impute()` from the `QFeatures` package. 
+hard-to-verify imputation assumptions, which is our general recommendation. 
+However, `msqrob2` does not prevent users from using imputation, which can be 
+performed with `impute()` from the `QFeatures` package. 
 
 ## Precursor Filtering 
 
@@ -520,11 +540,16 @@ introduce noise and artefacts in the data.
 We apply standard filtering: 
 
 
-1. q-value threshold of 0.01 for the identification of precursors (`Q.Value`) and protein groups (`PG.Q.Value`). If the file is processed via matching between runs, it is also useful to filter on Lib.Q.Value and Lib.PG.Q.Value.
+1. q-value threshold of 0.01 for the identification of precursors (`Q.Value`) 
+and protein groups (`PG.Q.Value`). If the file is processed via matching between 
+runs, it is also useful to filter on Lib.Q.Value and Lib.PG.Q.Value.
 
-2. Remove precursors that could not be mapped, i.e. when `Precursor.Id` column is an empty string.  
+2. Remove precursors that could not be mapped, i.e. when `Precursor.Id` column 
+is an empty string.  
 
-3. Filter decoys, i.e. only keep precursors for which the `Decoy` column equals 0. (Note, that the `Decoy` column is not present in the output of older versions of DIA-NN)
+3. Filter decoys, i.e. only keep precursors for which the `Decoy` column equals 
+0. (Note, that the `Decoy` column is not present in the output of older versions 
+of DIA-NN).
 
 4. Keeping only proteotypic peptides, which map uniquely to a specific protein.
 
@@ -542,8 +567,14 @@ qf <-  qf |>
 ```
 
 
-Note, that it is important that the filtering criteria are not distorting the distribution of the test statistics in the downstream analysis for features that are non-DA. 
-It can be shown that filtering will not induce bias results when the filtering criterion is independent of test statistic. The criteria that we proposed above are all based on the results of the identification step, hence, they are independent of the downstream test statistics that will be used to prioritize DA proteins. 
+Note, that it is important that the filtering criteria are not distorting the 
+distribution of the test statistics in the downstream analysis for features that 
+are non-DA. 
+It can be shown that filtering will not induce bias results when the filtering 
+criterion is independent of test statistic. The criteria that we proposed above 
+are all based on the results of the identification step, hence, they are 
+independent of the downstream test statistics that will be used to prioritize DA 
+proteins. 
 
 ```{r}
 #Garbage collection to free space 
@@ -552,11 +583,11 @@ gc(); gc()
 
 ### Assay joining
 
-Up to now, the data from different runs were kept in separate assays. We can 
-now join the normalised sets into an precursor set using joinAssays(). Sets are 
-joined by stacking the columns (samples) in a matrix and rows (features) are 
-matched according to a row identifier, here the `Precursor.Id`.
-We do this for the non-enriched and phospho samples, which we store in assays 
+- Up to now, the data from different runs were kept in separate assays. 
+- We can now join the normalised sets into an precursor set using joinAssays(). 
+- Sets are joined by stacking the columns (samples) in a matrix and rows 
+(features) are matched according to a row identifier, here the `Precursor.Id`.
+- We do this for the non-enriched and phospho samples, which we store in assays 
 with names: `precursors` and `precursorsPTM`, respectively.
 
 ```{r assay_joining}
@@ -575,7 +606,7 @@ qf <- joinAssays(
 )
 ```
 
-remove assays to free space 
+Remove the original assays to free space 
 
 ```{r}
 qf <- qf[,,-c(1:36)]
@@ -588,8 +619,8 @@ gc(); gc()
 
 ### Filtering: Remove highly missing precursors
 
-We keep peptides that were observed at last 6 times out of the $n
-= 24$ samples, so that we can estimate the peptide characteristics. 
+We keep peptides that were observed at last 6 times out of the 
+$n= 24$ samples, so that we can estimate the peptide characteristics. 
 
 ```{r remove_precursors_with_missingness}
 nObs <- 6
@@ -604,11 +635,14 @@ gc(); gc()
 
 ### Filter one-hit wonders
 
+We only do this for the non-enriched assay (whole proteome).
+
 Here, we remove proteins that can only be found by one peptide, as such proteins 
 may not be trustworthy. We only do that for the non-enriched samples as we will
 use this assay to estimate protein abundances.
 
-1. We first calculate how many distinct peptides map to each protein group (`PG_ProteinGroups`). We use the stripped precursor sequence, i.e. sequence of the base peptide for this purpose. 
+1. We first calculate how many distinct peptides map to each protein group (`PG_ProteinGroups`). We use the stripped precursor sequence, i.e. sequence of 
+the base peptide for this purpose. 
 
 2. We store this information in the row data of the precursors assay
 
@@ -687,20 +721,20 @@ qf[, , "precursorsPTM_log"] |> #1.
 ```
 
 
-The data seems very clean. 
+The data seems very clean. However, normalisation is still required. 
 
-However, normalisation is still required. 
-For this dataset we use median of ratio normalisation, which addresses both 
+We use the median of ratio normalisation, which addresses both 
 differences in loading as well as difference in compositionality.
-We first calculate a reference sample by using the log2 geometric mean, i.e. 
+
+- This first calculates a reference sample by using the log2 geometric mean, i.e. 
 the arithmetic mean on a log scale, for every feature.
-Subsequently log2 fold changes are calculated between each feature of a sample 
+- Subsequently log2 fold changes are calculated between each feature of a sample 
 and the reference sample.
-Finally, the median of these log2 fold changes are used as the log2-tranformed 
+- Finally, the median of these log2 fold changes are used as the log2-tranformed 
 normalisation factor. 
+
 The method is the default method for normalisation in bulk RNA-seq data analysis 
-with DESeq2.
-In our hands it performs very well in a proteomics context.
+with DESeq2. In our hands it performs very well in a proteomics context.
 
 ```{r normalisation}
 qf <- sweep( #4. Subtract log2 norm factor column-by-column (MARGIN = 2)
@@ -730,6 +764,7 @@ y_{ip}^{\text{norm}} = y_{ip} - \log_2(nf_i)
 $$
 
 with $y_ip$ the log2-transformed intensities and $nf_i$ the log2-transformed norm factor. 
+
 Upon normalisation, we can see that the distribution of the 
 $y_{ip}^{\text{norm}}$ nicely overlap (using the same code as above)
 
@@ -800,29 +835,50 @@ rm(precursorsCommon, precursorsCommonPTM)
 gc(); gc()
 ```
 
+Note, that normalisation could have been avoided by using Precursor.Normalised 
+which is already internally normalised by DIA-NN. However, we do not know the 
+exact procedure for this. 
+
+This generally works well for many datasets. 
+
+In this vignette we have chosen to conduct the normalisation explicitly ourselves
+using a method for which we know the underlying rationale. 
+
 ## Summarisation
 
 Here, we summarise the precursor-level data for the non-enriched runs into 
-protein intensities using maxLFQ. 
-maxLFQ first calculates all pairwise log ratio's between samples only using 
+protein intensities using maxLFQ, which is one of the default methods used in 
+DIA data analysis.
+
+Note, that the maxLFQ implementation can become slow for large datasets. In that 
+case we recommend the median polish method.
+
+- maxLFQ first calculates all pairwise log ratio's between samples only using 
 their shared precursors.
-Particularly, it uses the median of the log ratio's between the shared precursors s, i.e. 
-$$r_{ij} = median(y_{sj}-y_{si})$$.  
-Hence, it first eliminates ion effects. 
-It then estimates the summaries by solving 
+  Particularly, it uses the median of the log ratio's between the shared 
+  precursors, i.e. 
+  $$r_{ij} = median(y_{sj}-y_{si})$$.  
+  Hence, it first eliminates ion effects. 
+
+- It then estimates the summaries by solving 
 
 $$
 \sum_i\sum_j(y^{prot}_j - y^{prot}_i - r_ij)^2
 $$
+
 It is implemented in the `maxLFQ` function of the `iq` package. 
 
-`aggregateFeatures()` streamlines summarisation. It requires the name
-of a `rowData` column to group the precursors into proteins (or
-protein groups), here `PG_ProteinGroups`. We provide the summarisation
-approach through the `fun` argument. Other summarisation methods
-are available from the `MsCoreUtils` package, see `?aggregateFeatures`
-for a comprehensive list. The function will return a `QFeatures`
-object with a new set that we called `proteins`.
+`aggregateFeatures()` in the QFeatures package streamlines summarisation. 
+It requires the name of a `rowData` column to group the precursors into proteins 
+(or protein groups), here `Protein.Group`. We provide the summarisation
+approach through the `fun` argument. 
+
+The function will return a `QFeatures` object with a new set that we called 
+`proteins`.
+
+Other summarisation methods are available from the `MsCoreUtils` package, see `?aggregateFeatures` for a comprehensive list. 
+
+
 
 ```{r summarisation, warning=FALSE}
 (qf <- aggregateFeatures(
@@ -844,7 +900,10 @@ Data exploration aims to highlight the main sources of variation in
 the data prior to data modelling and can pinpoint to outlying or
 off-behaving samples. 
 
-## Phospho-enriched samples 
+We first performa the QC for the Phospho-enriched runs then for the non-enriched
+runs. 
+
+## Phospho-enriched runs
 
 ### Marginal distribution at precursor level 
 
@@ -959,7 +1018,7 @@ getWithColData(qf, "precursorsPTM_norm") |>
 gc(); gc()
 ```
 
-## Non-enriched samples
+## Non-enriched runs
 
 ### Marginal distribution at precursor and protein level 
 
@@ -1107,7 +1166,7 @@ gc(); gc()
 
 
 
-# Data Modeling at phospho-peptidoform-level 
+# Data Modeling at phospho-precursor-level 
 
 ## Model estimation
 
@@ -1136,11 +1195,12 @@ gc(); gc()
 
 ## Inference
 
-We can now convert the research question "do the spike-in
-conditions affect the protein intensities?" into a statistical
-hypothesis. 
+We can now convert the research question "Is the abundance of phospho-precursors 
+different between the strains" into a statistical hypotheses. 
 
-In other words, we need to translate this question in a null and alternative hypothesis on a single model parameter or a linear combination of model parameters, which is also referred to with a [contrast](#sec-inference).
+In other words, we need to translate this question in a null and alternative 
+hypothesis on a single model parameter or a linear combination of model 
+parameters, which is also referred to with a contrast.
 
 To aid defining contrasts, we will visualise the experimental design using the `ExploreModelMatrix` package.
 
@@ -1153,12 +1213,14 @@ vd <- ExploreModelMatrix::VisualizeDesign(
 )
 vd$plotlist
 ```
-We have 2 interesting research questions related to the diet. 
+We have 3 interesting research questions related to the strain. 
 
-1. Is there an effect of diet in male mice / prioritise proteins that are DA between low and high diet for male mice
-2. Is there an effect of sex in high diet 
+1. Is a precursor DA between ArgSer strain and the WT (control) 
+2. Is a precursor DA between ProAla strain and the WT (control)  
+3. Is a precursor DA between ProAla strain and the ArgSer strain.  
 
-Each of these contrasts can be translated in a log2 FC or a difference in log2 FC and can be estimated with one or a linear combination of the model parameters. 
+Each of these contrasts can be translated in a log2 FC or a difference in log2 
+FC and can be estimated with one or a linear combination of the model parameters. 
 
 Below we define the contrast and construct the corresponding contrast matrix. 
 
@@ -1306,7 +1368,9 @@ gc(); gc()
 
 ### Detail plots
 
-We can explore the data for a protein to validate the statistical inference results. For example, let’s explore the normalised precursor and the summarised protein intensities for the protein with the most significant log2 fold change.
+We can explore the data for a precursor to validate the statistical inference 
+results. For example, let’s explore the precursor and the normalised 
+precursor intensities for the precursor with the most significant log2 fold change.
 
 ```{r most_siginificant_PTM}
 (target_feature <- inferencesPTM |> 
@@ -1319,10 +1383,11 @@ inferencesPTM |>
 
 To obtain the required data, we perform a little data manipulation pipeline:
 
-We use the QFeatures subsetting functionality to retrieve all data related to 
-ion data used for model fitting. We then convert the data with longForm() 
-for plotting. Finally, we plot the log2 normalised intensities for each sample 
-for the unnormalised and normalised phospho precursors. 
+- We use the QFeatures subsetting functionality to retrieve all data related to 
+ion data used for model fitting. 
+- We then convert the data with longForm() for plotting. 
+- Finally, we plot the log2 normalised intensities for each sample for the 
+unnormalised and normalised phospho precursors. 
 
 ```{r detail_line_plot}
 qf[target_feature, , c("precursorsPTM_log","precursorsPTM_norm")] |> #1
@@ -1359,9 +1424,9 @@ qf[target_feature, , c("precursorsPTM_log","precursorsPTM_norm")] |> #1
   }
 ```
 
-We prioritised differentially abundant phospho-precursors. However, this might 
-be due to the parent proteins on which the PTMs occur also change in abundance 
-regardless of the PTM. 
+We prioritised DA phospho-precursors. However, they might be DA due to the 
+parent proteins on which the PTMs occur that can also change in abundance 
+regardless of the modification. 
 Any changes in the abundance of a phospho-peptidoform can thus be confounded 
 with changes in protein abundance.
 
@@ -1507,7 +1572,9 @@ lapply(colnames(L),
 
 ### Detail plots
 
-We can explore the data for a protein to validate the statistical inference results. For example, let’s explore the normalised precursor and the summarised protein intensities for the protein with the most significant log2 fold change.
+We can explore the data for a protein to validate the statistical inference 
+results. For example, let’s explore the normalised precursor and the summarised 
+protein intensities for the protein with the most significant log2 fold change.
 
 ```{r}
 (target_feature <- inferences |> 
@@ -1520,7 +1587,14 @@ inferences |>
 
 To obtain the required data, we perform a little data manipulation pipeline:
 
-We use the QFeatures subsetting functionality to retrieve all data related to and focusing on the peptides_log and proteins sets that contains the peptide ion data used for model fitting. We then convert the data with longForm() for plotting. Finally, we plot the log2 normalised intensities for each sample at the protein and at the peptide level. Since multiple peptides are recorded for the protein, we link peptides across samples using a grey line. Samples are colored according to E. coli spike-in condition.
+- We use the QFeatures subsetting functionality to retrieve all data related to 
+and focusing on the precursors_log and proteins sets that contains the peptide 
+ion data used for model fitting. 
+- We then convert the data with longForm() for plotting. 
+- Finally, we plot the log2 normalised intensities for each sample at the 
+protein and at the peptide level. Since multiple peptides are recorded for the 
+protein, we link peptides across samples using a grey line. Samples are colored 
+according to strain.
 
 ```{r}
 qf[target_feature, , c("precursors_log","precursors_norm", "proteins")] |> #1
@@ -1561,7 +1635,8 @@ qf[target_feature, , c("precursors_log","precursors_norm", "proteins")] |> #1
 
 ### Compare phospo-precursor level intensities to protein level intensities
  
-We compare the intensities for the top 5 DA phospo-precursors for the first contrast to these of their corresponding protein in the non-enriched assay. 
+We compare the intensities for the top 5 DA phospo-precursors for the first 
+contrast to these of their corresponding protein in the non-enriched assay. 
  
 ```{r comparison_plots, warning = FALSE, message = FALSE}
 contr = colnames(L)[1]
@@ -1652,11 +1727,13 @@ Two designs: PTM and protein level quantification be done
 2. Calculate relative log2 transformed abundances at peptidoform level 
 $$y^\text{pep,rel}_i = y^\text{pep}_i - y^\text{prot}_i$$
 
-3. Perform conventional differential msqrob2 analysis on the relative peptidoform level. $\rightarrow$ Immediately gives us diferential usages!
+3. Perform conventional differential msqrob2 analysis on the relative 
+peptidoform level. $\rightarrow$ Immediately gives us diferential usages!
     
 4. Optionally 
     
-  a. aggregate relative log2 transformed abundances at peptidoform level at PTM-level
+  a. aggregate relative log2 transformed abundances at peptidoform level at 
+     PTM-level
   b. perform a differential msqrob2 analysis at PTM-level
 
 
@@ -1674,6 +1751,7 @@ $$
 SE_\widehat{DU} &=& \sqrt{(SE_\widehat{FC}^{PTM})^2 + (SE_\widehat{FC}^{protein})^2}
 \end{array}
 $$
+
 ### Our study
 
 For this dataset we have phospho-enriched and non-enriched runs on the same 
@@ -1736,13 +1814,13 @@ non-enriched assay.
 matchedSamps <- match(
   getWithColData(qf,"precursorsPTM_norm")$sampleId,
   getWithColData(qf,"proteins")$sampleId
-  )
+  ) ## 1.
 
 nfLog <- calculate_usage_nfLog(qf[["precursorsPTM_norm"]], 
                                qf[["proteins"]], 
                                fcol= "Protein.Group", 
                                fcolNE = "Protein.Group", 
-                               matchColsSeToseNE = matchedSamps)
+                               matchColsSeToseNE = matchedSamps) ## 2.
 
 qf <- sweep( #4. Subtract log2 norm factor elementwise (MARGIN = 1:2)
       qf,
@@ -1750,7 +1828,7 @@ qf <- sweep( #4. Subtract log2 norm factor elementwise (MARGIN = 1:2)
       STATS = nfLog,
       i = "precursorsPTM_norm",
       name = "precursorsPTM_usage"
-      )
+      ) ## 3. 
 ```
 
 We only keep precursors for which the usage can be calculated in at least 6 samples. 
@@ -1915,7 +1993,10 @@ lapply(colnames(L),
 
 ### Detail plots
 
-We can explore the data for a protein to validate the statistical inference results. For example, let’s explore the normalised precursor and the summarised protein intensities for the protein with the most significant log2 fold change.
+We can explore the data for a protein to validate the statistical inference 
+results. For example, let’s explore the normalised precursor abundance, usages 
+as well as the summarised protein intensities for the protein with the most 
+significant log2 fold change.
 
 ```{r}
 (target_feature <- inferencesUsage |> 
@@ -1926,9 +2007,7 @@ inferencesUsage |>
   filter(feature == target_feature)
 ```
 
-To obtain the required data, we perform a little data manipulation pipeline:
-
-We use the QFeatures subsetting functionality to retrieve all data related to and focusing on the peptides_log and proteins sets that contains the peptide ion data used for model fitting. We then convert the data with longForm() for plotting. Finally, we plot the log2 normalised intensities for each sample at the protein and at the peptide level. Since multiple peptides are recorded for the protein, we link peptides across samples using a grey line. Samples are colored according to E. coli spike-in condition.
+We again make a similar plot as before.
 
 ```{r}
 ptm <-  qf[target_feature, , c("precursorsPTM_norm", "precursorsPTM_usage")] |> #1
