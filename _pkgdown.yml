@@ -15,4 +15,8 @@ navbar:
   right:
    - icon: fa-github
      href: https://statOmics.github.io/2026_eurobioc_workshop_msqrob2ptm
-     
+
+output:
+    html_document:
+      theme: cosmo
+      toc: true

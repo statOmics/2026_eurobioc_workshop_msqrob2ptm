@@ -4,7 +4,6 @@ author:
     - name: Lieven Clement, Nina Demeulemeester, Luca De Corso and Lucas Beerland
 output: 
     BiocStyle::html_document:
-      code_download: true
       toc: true
       number_sections: true
 
