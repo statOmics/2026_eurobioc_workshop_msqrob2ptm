@@ -1,5 +1,5 @@
 ---
-title: "msqrob2PTM: msqrob2 Mass Spectrometry Data Analysis Workflow for differential PTM analysis - DIA-NN case study"
+title: "msqrob2PTM: DIA-NN case study - Paired phospho-enriched and non-enriched samples"
 author:
     - name: Lieven Clement, Nina Demeulemeester, Luca De Corso and Lucas Beerland
 output: 
@@ -264,10 +264,13 @@ time that the script is knit.
 - In this vignette we exceptionally do this because we already cached the files 
   in the docker, so we specifically point to this cache directory 
   (`/opt/fileCache`).
+- If you run the vignette(or code-chunk below) on your local machine in your 
+  local R session (without using the docker) comment first line and 
+  uncomment second line. 
 
 ```{r data_path}
-#bfc <- BiocFileCache("/opt/fileCache")
-bfc <- BiocFileCache()
+bfc <- BiocFileCache("/opt/fileCache") # for usage with docker
+#bfc <- BiocFileCache() # for usage in local rstudio session on local machine
 precursorFile <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/WholeProteome_DIANNreport.parquet?download=1")
 precursorFilePTM <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1")
 ```
