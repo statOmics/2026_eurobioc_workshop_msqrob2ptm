@@ -50,10 +50,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/msqrob2PTM_diann_study_complete.html">msqrob2PTM: msqrob2 Mass Spectrometry Data Analysis Workflow for differential PTM analysis - DIA-NN case study</a>
+      <a href="articles/msqrob2PTM_diann_study_paired.html">msqrob2PTM: DIA-NN case study - Paired phospho-enriched and non-enriched samples</a>
     </li>
     <li>
-      <a href="articles/msqrob2PTM_diann_study.html">msqrob2PTM Workshop</a>
+      <a href="articles/msqrob2PTM_diann_study_unpaired.html">msqrob2PTM: DIA-NN case study - Unpaired phospho-enriched and non-enriched samples</a>
+    </li>
+    <li>
+      <a href="articles/msqrob2PTM_diann_workshop.html">msqrob2PTM Workshop</a>
     </li>
   </ul>
 </li>
@@ -207,6 +210,23 @@
 <li>Use <code>msqrob2</code> to answer biological questions from processed data</li>
 <li>Learn how to translate these biological questions into model-related parameter combinations.</li>
 </ul>
+</div>
+<div class="section level3">
+<h3 id="docker">Docker<a class="anchor" aria-label="anchor" href="#docker"></a>
+</h3>
+<ul>
+<li>A docker image for this workshop can be used</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-e</span> PASSWORD=bioc <span class="at">-p</span> 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest</span></code></pre></div>
+<p>Once running, navigate to <a href="http://localhost:8787/" class="external-link uri">http://localhost:8787/</a> and then login with <code>rstudio</code>:<code>bioc</code>.</p>
+<p>If this does not work (e.g. Apple ARM architecture) you can use</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a> <span class="ex">docker</span> run <span class="at">--platform</span> linux/amd64 <span class="at">-e</span> PASSWORD=bioc <span class="at">-p</span> 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest</span></code></pre></div>
+<ul>
+<li>If you have downloaded the docker image previously, you can re-pull it in order work with the most recent image</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">docker</span> pull ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         </span></code></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">docker</span> pull <span class="at">--platform</span> linux/amd64 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         </span></code></pre></div>
 </div>
 </div>
 </div>
