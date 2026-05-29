@@ -212,21 +212,28 @@
 </ul>
 </div>
 <div class="section level3">
-<h3 id="docker">Docker<a class="anchor" aria-label="anchor" href="#docker"></a>
+<h3 id="running-through-docker">Running through docker<a class="anchor" aria-label="anchor" href="#running-through-docker"></a>
 </h3>
+<p>The workflow file along with an R runtime environment including all required packages and the RStudio (Posit) editor are all bundled in a <em>docker</em> container.</p>
+<p>After installation, this docker container can be run on the computer and the code and examples from the vignettes can be evaluated within this environment (without the need to install any additional packages or files).</p>
 <ul>
-<li>A docker image for this workshop can be used</li>
+<li>If you don’t already have, install <a href="https://www.docker.com/" class="external-link">docker</a>. Find installation information <a href="https://docs.docker.com/desktop/" class="external-link">here</a>.</li>
+<li>Get the <a href="https://hub.docker.com/r/jorainer/spectripyworkshop" class="external-link">docker image</a> of this tutorial e.g. from the command line with:</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-e</span> PASSWORD=bioc <span class="at">-p</span> 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest</span></code></pre></div>
-<p>Once running, navigate to <a href="http://localhost:8787/" class="external-link uri">http://localhost:8787/</a> and then login with <code>rstudio</code>:<code>bioc</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">docker</span> pull ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         </span></code></pre></div>
 <p>If this does not work (e.g. Apple ARM architecture) you can use</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a> <span class="ex">docker</span> run <span class="at">--platform</span> linux/amd64 <span class="at">-e</span> PASSWORD=bioc <span class="at">-p</span> 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="ex">docker</span> pull <span class="at">--platform</span> linux/amd64 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         </span></code></pre></div>
 <ul>
-<li>If you have downloaded the docker image previously, you can re-pull it in order work with the most recent image</li>
+<li>This will download the docker container with all software/packages based on Bioconductor release 3.23.</li>
+<li>Start the docker container, either through the Docker Desktop, or on the command line with</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">docker</span> pull ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         </span></code></pre></div>
-<p>or</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">docker</span> pull <span class="at">--platform</span> linux/amd64 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         </span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-e</span> PASSWORD=bioc <span class="at">-p</span> 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest</span></code></pre></div>
+<p>or (e.g. for Apple ARM architecture)</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a> <span class="ex">docker</span> run <span class="at">--platform</span> linux/amd64 <span class="at">-e</span> PASSWORD=bioc <span class="at">-p</span> 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest</span></code></pre></div>
+<ul>
+<li>Enter <a href="http://localhost:8787" class="external-link"><code>http://localhost:8787</code></a> in a web browser and log in with username <code>rstudio</code> and password <code>bioc</code>.</li>
+<li>In the RStudio server version: open any of the Quarto files in the <em>vignettes</em> folder and evaluate the R code blocks in that document.</li>
+</ul>
 </div>
 </div>
 </div>
