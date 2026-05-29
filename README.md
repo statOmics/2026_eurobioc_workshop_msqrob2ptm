@@ -157,3 +157,34 @@ data analysis.
 * Use `msqrob2` to answer biological questions from processed data
 * Learn how to translate these biological questions into model-related
   parameter combinations.
+  
+### Docker 
+
+
+* A docker image for this workshop can be used
+
+```sh
+docker run -e PASSWORD=bioc -p 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest
+```
+
+Once running, navigate to http://localhost:8787/ and then login with `rstudio`:`bioc`. 
+
+If this does not work (e.g. Apple ARM architecture)
+ you can use 
+
+```sh
+ docker run --platform linux/amd64 -e PASSWORD=bioc -p 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest
+```
+
+* If you have downloaded the docker image previously, you can re-pull it in order work with the most recent image  
+
+```sh
+docker pull ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         
+```
+
+or 
+
+```sh
+docker pull --platform linux/amd64 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         
+```
+
