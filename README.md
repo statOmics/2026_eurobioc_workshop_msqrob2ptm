@@ -158,33 +158,51 @@ data analysis.
 * Learn how to translate these biological questions into model-related
   parameter combinations.
   
-### Docker 
 
+### Running through docker
 
-* A docker image for this workshop can be used
+The workflow file along with an R runtime environment including all required
+packages and the RStudio (Posit) editor are all bundled in a *docker* container.
 
-```sh
-docker run -e PASSWORD=bioc -p 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest
-```
+After installation, this docker container can be run on the computer and the
+code and examples from the vignettes can be evaluated within this environment
+(without the need to install any additional packages or files).
 
-Once running, navigate to http://localhost:8787/ and then login with `rstudio`:`bioc`. 
-
-If this does not work (e.g. Apple ARM architecture)
- you can use 
-
-```sh
- docker run --platform linux/amd64 -e PASSWORD=bioc -p 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest
-```
-
-* If you have downloaded the docker image previously, you can re-pull it in order work with the most recent image  
+-   If you don't already have, install [docker](https://www.docker.com/). Find
+    installation information [here](https://docs.docker.com/desktop/).
+-   Get the [docker
+    image](https://hub.docker.com/r/jorainer/spectripyworkshop) of this
+    tutorial e.g. from the command line with:
+    
 
 ```sh
 docker pull ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         
 ```
 
-or 
+If this does not work (e.g. Apple ARM architecture) you can use 
 
 ```sh
 docker pull --platform linux/amd64 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest         
 ```
+
+-   This will download the docker container with all software/packages based on
+    Bioconductor release 3.23.
+-   Start the docker container, either through the Docker Desktop, or on the
+    command line with
+
+
+```sh
+docker run -e PASSWORD=bioc -p 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest
+```
+
+or (e.g. for Apple ARM architecture)
+
+```sh
+ docker run --platform linux/amd64 -e PASSWORD=bioc -p 8787:8787 ghcr.io/statomics/2026_eurobioc_workshop_msqrob2ptm:latest
+```
+
+-   Enter [`http://localhost:8787`](http://localhost:8787) in a web browser and
+    log in with username `rstudio` and password `bioc`.
+-   In the RStudio server version: open any of the Quarto files in the
+    *vignettes* folder and evaluate the R code blocks in that document.
 

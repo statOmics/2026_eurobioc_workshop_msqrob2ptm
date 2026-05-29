@@ -6,7 +6,6 @@ output:
     BiocStyle::html_document:
       code_download: true
       toc: true
-      toc_float: true
       number_sections: true
 
 date: "`r BiocStyle::doc_date()`"
@@ -99,7 +98,7 @@ knitr::include_graphics("figs/lfq_workflow.png")
     - Context depending missingness
     - Non-random missingness
 
-$\rightarrow$ Unbalanced pepide identifications across samples and messy data
+$\rightarrow$ Unbalanced peptide identifications across samples and messy data
 
 ## Data Independent Acquisition 
 
@@ -204,7 +203,7 @@ anticodon which mis-incorporate serine at proline (Pro -> Ser) or serine at
 arginine codons (Arg -> Ser), respectively (Berg et al. 2017, 2019b). 
 
 Six replicates of each strain were grown. From each replicate an non-enriched (whole proteome)
-and a phospopeptide - enriched sample was prepared and quantified using a data
+and a phospho-peptide-enriched sample was prepared and quantified using a data
 independent acquisition workflow.
 
 The data for the non-enriched and phospho enriched samples are deposited to 
@@ -383,7 +382,7 @@ precursors |>
   ggplot(aes(x = log2(Precursor.Quantity))) +
   geom_density() +
   theme_minimal() +
-  labs(subtitle = "Abuandances (non-enriched)") + precursorsPTM |> 
+  labs(subtitle = "Abundances (non-enriched)") + precursorsPTM |> 
   filter(is.finite(Precursor.Quantity) & Precursor.Quantity > 0) |>
   ggplot(aes(x = log2(Precursor.Quantity))) +
   geom_density() +
