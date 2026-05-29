@@ -1,5 +1,5 @@
 ---
-title: "msqrob2PTM: msqrob2 Mass Spectrometry Data Analysis Workflow for differential PTM analysis - DIA-NN case study"
+title: "msqrob2PTM Workshop"
 author:
     - name: Lieven Clement, Nina Demeulemeester, Luca De Corso and Lucas Beerland
 output: 
@@ -232,6 +232,7 @@ We load the `msqrob2` package, along with additional packages for
 data manipulation and visualisation.
 
 ```{r load_libraries}
+suppressPackageStartupMessages({
 library("QFeatures")  
 library("dplyr") 
 library("tidyr")
@@ -248,6 +249,7 @@ library("purrr")
 library("tibble")
 library("scater")
 library("BiocFileCache")
+})
 ```
 
 ## Data
@@ -264,7 +266,8 @@ time that the script is knit.
   (`/opt/fileCache`).
 
 ```{r data_path}
-bfc <- BiocFileCache("/opt/fileCache")
+#bfc <- BiocFileCache("/opt/fileCache")
+bfc <- BiocFileCache()
 precursorFile <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/WholeProteome_DIANNreport.parquet?download=1")
 precursorFilePTM <- bfcrpath(bfc,"https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1")
 ```
