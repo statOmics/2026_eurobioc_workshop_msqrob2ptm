@@ -127,15 +127,17 @@ with the audience.
 
 ### Time outline
 
-| Activity                       | Time |
-|--------------------------------|------|
-| Introduction and setup         | 10m  |
-| The `QFeatures` data class     | 5m  |
-| Data preprocessing             | 15m  |
-| Break                          | 15m  |
-| Modelling sources of variation | 10m  |
-| Hypothesis testing             | 10m  |
-| Wrap up                        |  5m  |
+| Activity                        | Time |
+|---------------------------------|------|
+| Introduction and setup          | 10m  |
+| Data import and  `QFeature`     | 10m  |
+| Data preprocessing              | 10m  |
+| Inferring Precursor-level DA    | 15m  |
+| Break                           | 10m  |
+| Inferring Protein-level DA      | 10m  |
+| Inferring Precursor-level Usage | 10m  |
+| Inferring PTM-level Usage       | 10m  |
+| Wrap up                         |  5m  |
 
 
 ### Learning goals
