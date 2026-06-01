@@ -4,13 +4,13 @@ WORKDIR /home/rstudio
 
 COPY --chown=rstudio:rstudio . /home/rstudio/
 
-ENV BFC_CACHE=/opt/fileCache
+RUN mkdir -p /data/fileCache
+
+ENV BFC_CACHE=/data/fileCache
 
 RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocManager::install(ask=FALSE)"
-
-RUN mkdir -p /opt/fileCache
 
 # Data is cached while building vignette 
 RUN Rscript -e "options(repos = BiocManager::repositories()); devtools::install('.', dependencies=TRUE, build_vignettes=TRUE)"
 
-RUN chmod -R 777 /opt/fileCache
+RUN chmod -R 777 /data/fileCache
