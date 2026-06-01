@@ -13,4 +13,4 @@ ENV BFC_CACHE=/opt/fileCache
 RUN mkdir -p /opt/fileCache && \
     chmod -R 777 /opt/fileCache
 
-RUN Rscript -e "library('BiocFileCache');bfc <- BiocFileCache();precursorFile <- bfcrpath(bfc,'https://zenodo.org/records/20414816/files/WholeProteome_DIANNreport.parquet?download=1');precursorFilePTM <- bfcrpath(bfc,'https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1');fastaFile <- bfcrpath(bfc,'https://rest.uniprot.org/uniprotkb/stream?compressed=true&download=true&format=fasta&query=%28%28proteome%3AUP000002311%29+AND+reviewed%3Dtrue%29')"
+RUN Rscript -e "library('BiocFileCache');bfc <- BiocFileCache('/opt/fileCache');precursorFile <- bfcrpath(bfc,'https://zenodo.org/records/20414816/files/WholeProteome_DIANNreport.parquet?download=1');precursorFilePTM <- bfcrpath(bfc,'https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1');fastaFile <- bfcrpath(bfc,'https://rest.uniprot.org/uniprotkb/stream?compressed=true&download=true&format=fasta&query=%28%28proteome%3AUP000002311%29+AND+reviewed%3Dtrue%29')"
