@@ -18,6 +18,10 @@ RUN echo "options(BiocFileCache.cache = '/opt/fileCache')" >> /usr/local/lib/R/e
 # Install packages
 RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocManager::install(ask=FALSE)"
 
+
+# Install packages FIRST
+RUN Rscript -e "options(repos = BiocManager::repositories());"
+
 # Pre-download data INTO the cache
 RUN Rscript -e "\
 library(BiocFileCache); \
@@ -26,5 +30,5 @@ bfcrpath(bfc,'https://zenodo.org/records/20414816/files/WholeProteome_DIANNrepor
 bfcrpath(bfc,'https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1'); \
 bfcrpath(bfc,'https://rest.uniprot.org/uniprotkb/stream?compressed=true&download=true&format=fasta&query=((proteome:UP000002311)+AND+reviewed=true)')"
 
-# Install your package AND build vignettes LAST
-RUN Rscript -e "options(repos = BiocManager::repositories()); devtools::install('.', dependencies=TRUE, build_vignettes=TRUE)"
+# Build vignettes LAST
+RUN Rscript -e "devtools::install('.', dependencies=TRUE, build_vignettes=TRUE)"
