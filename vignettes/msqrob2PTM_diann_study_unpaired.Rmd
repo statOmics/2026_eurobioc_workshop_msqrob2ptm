@@ -5,7 +5,9 @@ author:
 output: 
     BiocStyle::html_document:
       toc: true
+      toc_float: true
       number_sections: true
+      code_download: true
 
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('msqrob2')`"

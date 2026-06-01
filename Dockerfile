@@ -8,6 +8,7 @@ RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocMan
 
 RUN mkdir -p /opt/fileCache
 
+# Data is cached while building vignette 
 RUN Rscript -e "options(repos = BiocManager::repositories()); devtools::install('.', dependencies=TRUE, build_vignettes=TRUE)"
 
 RUN chmod -R 777 /opt/fileCache
