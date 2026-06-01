@@ -20,7 +20,7 @@ RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocMan
 
 
 # Install packages FIRST
-RUN Rscript -e "options(repos = BiocManager::repositories());"
+RUN Rscript -e "options(repos = BiocManager::repositories());BiocManager::install(c('BiocFileCache','devtools'), ask=FALSE)"
 
 # Pre-download data INTO the cache
 RUN Rscript -e "\
