@@ -84,8 +84,9 @@ that will provide peptide-to-spectrum matches (PSM). The quantified
 PSM are further processed by a search engine, e.g. MaxQuant.
 
 ```{r, echo = FALSE, out.width = "60%", fig.cap = "Overview of an LFQ-based proteomics workflow."}
-knitr::include_graphics("figs/lfq_workflow.png")
+knitr::include_graphics("https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/lfq_workflow.png")
 ```
+  
   
 
 
@@ -132,13 +133,14 @@ Hence, the quantification can be done using either MS1 or MS2.
 - MS-based proteomics returns peptides or precursors: pieces of proteins
 
 ```{r echo=FALSE}
-knitr::include_graphics("./figs/challenges_peptides.png")
+knitr::include_graphics("https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/challenges_peptides.png")
 ```
 
 - Quantification commonly required on the protein level
 
+
 ```{r echo=FALSE}
-knitr::include_graphics("./figs/challenges_proteins.png")
+knitr::include_graphics("https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/challenges_proteins.png")
 ```
 
 
@@ -457,7 +459,7 @@ Note, that for DIA data we start from precursor-level data and typically opt to
 summarize the precursor-level data immediately into protein level data. 
 
 ```{r, echo = FALSE, out.width = "80%", fig.cap = "Illustration of the `QFeatures` data class."}
-knitr::include_graphics("figs/QFeatures.png")
+knitr::include_graphics("https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/QFeatures.png")
 ```
 
 The `readQFeatures()` enables a seamless conversion of tabular data
