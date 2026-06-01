@@ -8,7 +8,9 @@ RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocMan
 
 RUN Rscript -e "options(repos = BiocManager::repositories()); devtools::install('.', dependencies=TRUE, build_vignettes=TRUE)"
 
-RUN mkdir -p /opt/fileCache && \
-    chmod -R 777 /opt/fileCache
+RUN mkdir -p /home/rstudio/.cache && \
+    chown -R rstudio:rstudio /home/rstudio/.cache
 
-RUN Rscript -e "library('BiocFileCache');bfc <- BiocFileCache('/opt/fileCache');precursorFile <- bfcrpath(bfc,'https://zenodo.org/records/20414816/files/WholeProteome_DIANNreport.parquet?download=1');precursorFilePTM <- bfcrpath(bfc,'https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1');fastaFile <- bfcrpath(bfc,'https://rest.uniprot.org/uniprotkb/stream?compressed=true&download=true&format=fasta&query=%28%28proteome%3AUP000002311%29+AND+reviewed%3Dtrue%29')"
+USER rstudio
+
+RUN Rscript -e "library('BiocFileCache');bfc <- BiocFileCache();print(bfccache(bfc));precursorFile <- bfcrpath(bfc,'https://zenodo.org/records/20414816/files/WholeProteome_DIANNreport.parquet?download=1');precursorFilePTM <- bfcrpath(bfc,'https://zenodo.org/records/20414816/files/Phosphoproteome_DIANNreport.parquet?download=1');fastaFile <- bfcrpath(bfc,'https://rest.uniprot.org/uniprotkb/stream?compressed=true&download=true&format=fasta&query=%28%28proteome%3AUP000002311%29+AND+reviewed%3Dtrue%29')"

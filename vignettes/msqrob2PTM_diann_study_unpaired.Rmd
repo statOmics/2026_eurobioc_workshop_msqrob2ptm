@@ -71,7 +71,7 @@ Six replicates of each strain were grown. From each replicate an non-enriched (w
 and a phospho-peptide-enriched sample was prepared and quantified using a data
 independent acquisition workflow.
 
-The data for the non-enriched and phospho enriched samples are deposited to 
+The data for the non-enriched and phospho-enriched samples are deposited to 
 PRIDE, dataset identifiers PXD068388 and PXD068392). 
 
 We will take a subset of the data to illustrate an unpaired analysis, i.e. we 
@@ -255,7 +255,7 @@ precursors |>
   ggplot(aes(x = log2(Precursor.Quantity))) +
   geom_density() +
   theme_minimal() +
-  labs(subtitle = "Abundances (phospho enriched)")
+  labs(subtitle = "Abundances (phospho-enriched)")
 ```
 
 
@@ -516,11 +516,14 @@ gc(); gc()
 
 ### Filter one-hit wonders
 
-We only do this for the non-enriched assay (whole proteome).
+We normally remove proteins that can only be found by one peptide, as such proteins 
+may not be trustworthy. 
 
-Here, we remove proteins that can only be found by one peptide, as such proteins 
-may not be trustworthy. We only do that for the non-enriched samples as we will
-use this assay to estimate protein abundances.
+Here, we opt not to do this because we prefer a protein-level summary based on 
+on precursor so that we can estimate usages later on. 
+
+We leave the code here for your reference. 
+But commented it out. 
 
 1. We first calculate how many distinct peptides map to each protein group (`PG_ProteinGroups`). We use the stripped precursor sequence, i.e. sequence of 
 the base peptide for this purpose. 
@@ -531,22 +534,23 @@ the base peptide for this purpose.
 
 
 ```{r filter_one_hit_wonders}
-# Filter for peptides per protein
-pepsPerProtDf <- qf[["precursors"]] |> 
-    rowData() |> 
-    data.frame() |>
-    dplyr::select("Stripped.Sequence", "Protein.Group") |>
-    group_by(Protein.Group) |>
-    mutate(pepsPerProt = Stripped.Sequence |>
-               unique() |> length()
-           ) #1.
+## Filter for peptides per protein
+# pepsPerProtDf <- qf[["precursors"]] |> 
+#    rowData() |> 
+#    data.frame() |>
+#    dplyr::select("Stripped.Sequence", "Protein.Group") |>
+#    group_by(Protein.Group) |>
+#    mutate(pepsPerProt = Stripped.Sequence |>
+#               unique() |> length()
+#           ) #1.
 
-rowData(qf[["precursors"]])$pepsPerProt <- pepsPerProtDf$pepsPerProt #2. 
+# rowData(qf[["precursors"]])$pepsPerProt <- pepsPerProtDf$pepsPerProt #2. 
 
-qf <- filterFeatures(qf, 
-                              ~ pepsPerProt > 1, 
-                              keep = TRUE) #3.
+#qf <- filterFeatures(qf, 
+#                              ~ pepsPerProt > 1, 
+#                              keep = TRUE) #3.
 ```
+
 
 ```{r}
 #Garbage collection to free space 
@@ -781,7 +785,7 @@ Data exploration aims to highlight the main sources of variation in
 the data prior to data modelling and can pinpoint to outlying or
 off-behaving samples. 
 
-We first performa the QC for the Phospho-enriched runs then for the non-enriched
+We first performance the QC for the Phospho-enriched runs then for the non-enriched
 runs. 
 
 ## Phospho-enriched runs
@@ -1090,6 +1094,7 @@ vd <- ExploreModelMatrix::VisualizeDesign(
 )
 vd$plotlist
 ```
+
 We have 3 interesting research questions related to the strain. 
 
 1. Is a precursor DA between ArgSer strain and the WT (control) 
@@ -2282,6 +2287,10 @@ gc(); gc()
 In this section we will make Along Protein graphs. 
 Therefore we need sequence information on the protein sequence, which we can 
 find in the fasta file from uniprot that was used for mapping. 
+
+Note, that it is recommended to use the fasta that was used for the mapping. 
+However, this file was not uploaded by the authors so we use the version of the 
+current release for illustration purposes. 
 
 1. Read fasta file (download it from uniprot)
 

@@ -205,7 +205,7 @@ Six replicates of each strain were grown. From each replicate an non-enriched (w
 and a phospho-peptide-enriched sample was prepared and quantified using a data
 independent acquisition workflow.
 
-The data for the non-enriched and phospho enriched samples are deposited to 
+The data for the non-enriched and phospho-enriched samples are deposited to 
 PRIDE, dataset identifiers PXD068388 and PXD068392). 
 
 Summary: 
@@ -386,7 +386,7 @@ precursors |>
   ggplot(aes(x = log2(Precursor.Quantity))) +
   geom_density() +
   theme_minimal() +
-  labs(subtitle = "Abundances (phospho enriched)")
+  labs(subtitle = "Abundances (phospho-enriched)")
 ```
 
 
@@ -458,18 +458,20 @@ Each piece of information in stored in an individual
 Throughout the aggregation and processing of these data, the relations
 between sets are tracked and recorded, thus allowing users to easily
 navigate across spectra, peptide and protein quantitative data.
+Note, that for DIA data we start from precursor-level data and typically opt to 
+summarize the precursor-level data immediately into protein level data. 
 
 ```{r, echo = FALSE, out.width = "80%", fig.cap = "Illustration of the `QFeatures` data class."}
 knitr::include_graphics("figs/QFeatures.png")
 ```
 
 The `readQFeatures()` enables a seamless conversion of tabular data
-into a `QFeatures` object. We provide the peptide table and the sample
-annotation table. The function will use the `quantCols` column in the
-sample annotation table to understand which columns in `peptides`
-contain the quantitative values, and automatically link the
+into a `QFeatures` object. We provide the feature table and the sample
+annotation table. If the table is of wide format, `readQFeatures` will use the 
+`quantCols` column in the sample annotation table to understand which columns in 
+feature table contain the quantitative values, and automatically link the
 corresponding sample annotation with the quantitative values. We also
-tell the function to use the `Sequence` column as peptide identifier,
+tell the function to use as specific column as feature identifier,
 which will be used as rownames. See `?readQFeatures()` for more
 details.
 
@@ -652,11 +654,14 @@ gc(); gc()
 
 ### Filter one-hit wonders
 
-We only do this for the non-enriched assay (whole proteome).
+We normally remove proteins that can only be found by one peptide, as such proteins 
+may not be trustworthy. 
 
-Here, we remove proteins that can only be found by one peptide, as such proteins 
-may not be trustworthy. We only do that for the non-enriched samples as we will
-use this assay to estimate protein abundances.
+Here, we opt not to do this because we prefer a protein-level summary based on 
+on precursor so that we can estimate usages later on. 
+
+We leave the code here for your reference. 
+But commented it out. 
 
 1. We first calculate how many distinct peptides map to each protein group (`PG_ProteinGroups`). We use the stripped precursor sequence, i.e. sequence of 
 the base peptide for this purpose. 
@@ -667,22 +672,23 @@ the base peptide for this purpose.
 
 
 ```{r filter_one_hit_wonders}
-# Filter for peptides per protein
-pepsPerProtDf <- qf[["precursors"]] |> 
-    rowData() |> 
-    data.frame() |>
-    dplyr::select("Stripped.Sequence", "Protein.Group") |>
-    group_by(Protein.Group) |>
-    mutate(pepsPerProt = Stripped.Sequence |>
-               unique() |> length()
-           ) #1.
+## Filter for peptides per protein
+# pepsPerProtDf <- qf[["precursors"]] |> 
+#    rowData() |> 
+#    data.frame() |>
+#    dplyr::select("Stripped.Sequence", "Protein.Group") |>
+#    group_by(Protein.Group) |>
+#    mutate(pepsPerProt = Stripped.Sequence |>
+#               unique() |> length()
+#           ) #1.
 
-rowData(qf[["precursors"]])$pepsPerProt <- pepsPerProtDf$pepsPerProt #2. 
+# rowData(qf[["precursors"]])$pepsPerProt <- pepsPerProtDf$pepsPerProt #2. 
 
-qf <- filterFeatures(qf, 
-                              ~ pepsPerProt > 1, 
-                              keep = TRUE) #3.
+#qf <- filterFeatures(qf, 
+#                              ~ pepsPerProt > 1, 
+#                              keep = TRUE) #3.
 ```
+
 
 ```{r}
 #Garbage collection to free space 
@@ -917,7 +923,7 @@ Data exploration aims to highlight the main sources of variation in
 the data prior to data modelling and can pinpoint to outlying or
 off-behaving samples. 
 
-We first performa the QC for the Phospho-enriched runs then for the non-enriched
+We first performance the QC for the Phospho-enriched runs then for the non-enriched
 runs. 
 
 ## Phospho-enriched runs
@@ -1226,6 +1232,7 @@ vd <- ExploreModelMatrix::VisualizeDesign(
 )
 vd$plotlist
 ```
+
 We have 3 interesting research questions related to the strain. 
 
 1. Is a precursor DA between ArgSer strain and the WT (control) 
@@ -1439,12 +1446,16 @@ qf[target_feature, , c("precursorsPTM_log","precursorsPTM_norm")] |> #1
 
 We prioritised DA phospho-precursors. However, they might be DA due to the 
 parent proteins on which the PTMs occur that can also change in abundance 
-regardless of the modification. 
+regardless of the modification, which is clearly illustrated for the top DA 
+phospho-precursor! 
+
 Any changes in the abundance of a phospho-peptidoform can thus be confounded 
 with changes in protein abundance.
 
-We therefore assess differential abundance at the protein level for the 
-non-enriched samples.
+We therefore first assess differential abundance at the protein level for the 
+non-enriched samples and will then propose an differential usage analysis where 
+the precursor-level log2-FC is corrected for the protein-level log2-FC.  
+
 
 ```{r}
 #Garbage collection to free space 
@@ -1617,6 +1628,15 @@ for (feat in top5)
 #Garbage collection to free space 
 gc(); gc()
 ```
+
+We see for multiple top DA phospho-precursors, that the reason for DA seems to 
+be associated with the similar changes in overall protein abundance. 
+Interestingly for other phospho-precursors the abundance of the precursor 
+changes between strains while the abundances at the protein-level remains stable 
+between strains.
+Hence, there is a stron need to correct the phospho-precursor level fold changes/
+abundances for corresponding changes at the protein level.
+  
 
 # Data Modeling of phospho-peptidoform usages
 
@@ -2446,6 +2466,11 @@ gc(); gc()
 In this section we will make Along Protein graphs. 
 Therefore we need sequence information on the protein sequence, which we can 
 find in the fasta file from uniprot that was used for mapping. 
+
+Note, that it is recommended to use the fasta that was used for the mapping. 
+However, this file was not uploaded by the authors so we use the version of the 
+current release for illustration purposes. 
+
 
 1. Read fasta file
 
