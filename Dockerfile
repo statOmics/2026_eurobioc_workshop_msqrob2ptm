@@ -4,6 +4,8 @@ WORKDIR /home/rstudio
 
 COPY --chown=rstudio:rstudio . /home/rstudio/
 
+ENV BFC_CACHE=/opt/fileCache
+
 RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocManager::install(ask=FALSE)"
 
 RUN mkdir -p /opt/fileCache
