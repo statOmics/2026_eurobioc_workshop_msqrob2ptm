@@ -9,6 +9,8 @@ RUN Rscript -e "options(repos = c(CRAN = 'https://cran.r-project.org')); BiocMan
 RUN Rscript -e "options(repos = BiocManager::repositories()); devtools::install('.', dependencies=TRUE, build_vignettes=TRUE)"
 
 ENV BFC_CACHE=/opt/fileCache
+ENV BFC_DISABLE_LOCKING=TRUE
+
 
 RUN mkdir -p /opt/fileCache && \
     chmod -R 777 /opt/fileCache
