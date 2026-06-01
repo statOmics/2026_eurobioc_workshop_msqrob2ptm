@@ -1,22 +1,14 @@
 url: https://statOmics.github.io/2026_eurobioc_workshop_msqrob2ptm
 
 template:
-  params:
-    bootstrap: 5
-    bootswatch: flatly
-    #ganalytics: UA-99999999-9
+  bootstrap: 5
+  bootswatch: flatly
 
 home:
   title: "2026_eurobioc_workshop_msqrob2ptm"
   type: inverse
 
-
 navbar:
   right:
-   - icon: fa-github
-     href: https://statOmics.github.io/2026_eurobioc_workshop_msqrob2ptm
-
-output:
-    html_document:
-      theme: cosmo
-      toc: true
+    - icon: fa-github
+      href: https://github.com/statOmics/2026_eurobioc_workshop_msqrob2ptm
