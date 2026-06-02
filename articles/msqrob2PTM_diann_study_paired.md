@@ -97,7 +97,10 @@ so as to identify and quantify individual precursors (MS1) in the m/z
 window using their MS2 fragments. Hence, the quantification can be done
 using either MS1 or MS2.
 
-![](https://www.creative-proteomics.com/blog/wp-content/uploads/2024/01/principles-applications-and-comparative-workflow-of-dia-and-dda.jpg)
+![Data-independent
+acquisition.](https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/dia.png)
+
+Data-independent acquisition.
 
 - m/z range into sequential windows (e.g., 400–425, 425–450 m/z)
 
@@ -332,12 +335,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10280747 549.1   17260585  921.9  12851877  686.4
-    ## Vcells 61173842 466.8  210117752 1603.1 262547360 2003.1
+    ## Ncells 10280784 549.1   17337490  926.0  12839796  685.8
+    ## Vcells 61173962 466.8  210117863 1603.1 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10280905 549.1   17260585  921.9  12851877  686.4
-    ## Vcells 61174214 466.8  168094202 1282.5 262547360 2003.1
+    ## Ncells 10280942 549.1   17337490  926.0  12839796  685.8
+    ## Vcells 61174334 466.8  168094291 1282.5 262547476 2003.1
 
 #### Subset phospho
 
@@ -361,12 +364,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10276804 548.9   17260585  921.9  12851877  686.4
-    ## Vcells 59522129 454.2  168094202 1282.5 262547360 2003.1
+    ## Ncells 10276841 548.9   17337490  926.0  12839796  685.8
+    ## Vcells 59522245 454.2  168094291 1282.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10276811 548.9   17260585  921.9  12851877  686.4
-    ## Vcells 59522176 454.2  168094202 1282.5 262547360 2003.1
+    ## Ncells 10276848 548.9   17337490  926.0  12839796  685.8
+    ## Vcells 59522292 454.2  168094291 1282.5 262547476 2003.1
 
 #### Quick check for imputation
 
@@ -398,12 +401,12 @@ gc(); gc()
 ```
 
     ##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  10515166 561.6   17260585  921.9  13445923  718.1
-    ## Vcells 100029057 763.2  168094202 1282.5 262547360 2003.1
+    ## Ncells  10515201 561.6   17337490  926.0  13445958  718.1
+    ## Vcells 100029171 763.2  168094291 1282.5 262547476 2003.1
 
     ##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  10515155 561.6   17260585  921.9  13445923  718.1
-    ## Vcells 100029075 763.2  168094202 1282.5 262547360 2003.1
+    ## Ncells  10515190 561.6   17337490  926.0  13445958  718.1
+    ## Vcells 100029189 763.2  168094291 1282.5 262547476 2003.1
 
 #### Sample annotation tables
 
@@ -499,12 +502,12 @@ gc(); gc()
 ```
 
     ##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  10553092 563.6   17260585  921.9  13445923  718.1
-    ## Vcells 100114363 763.9  168094202 1282.5 262547360 2003.1
+    ## Ncells  10553127 563.6   17337490  926.0  13445958  718.1
+    ## Vcells 100114477 763.9  168094291 1282.5 262547476 2003.1
 
     ##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  10553027 563.6   17260585  921.9  13445923  718.1
-    ## Vcells 100114291 763.9  168094202 1282.5 262547360 2003.1
+    ## Ncells  10553062 563.6   17337490  926.0  13445958  718.1
+    ## Vcells 100114405 763.9  168094291 1282.5 262547476 2003.1
 
 ### Convert to QFeatures
 
@@ -634,12 +637,12 @@ gc(); gc()
 ```
 
     ##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  10593631 565.8   17260585  921.9  17260585  921.9
-    ## Vcells 101650182 775.6  168094202 1282.5 262547360 2003.1
+    ## Ncells  10593666 565.8   17337490  926.0  17337490  926.0
+    ## Vcells 101650292 775.6  168094291 1282.5 262547476 2003.1
 
     ##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  10593635 565.8   17260585  921.9  17260585  921.9
-    ## Vcells 101650225 775.6  168094202 1282.5 262547360 2003.1
+    ## Ncells  10593670 565.8   17337490  926.0  17337490  926.0
+    ## Vcells 101650335 775.6  168094291 1282.5 262547476 2003.1
 
 ## Data preprocessing
 
@@ -723,12 +726,12 @@ gc(); gc()
 ```
 
     ##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  10599589 566.1   17260585  921.9  17260585  921.9
-    ## Vcells 102965810 785.6  168094202 1282.5 262547360 2003.1
+    ## Ncells  10599624 566.1   17337490  926.0  17337490  926.0
+    ## Vcells 102965924 785.6  168094291 1282.5 262547476 2003.1
 
     ##             used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  10599593 566.1   17260585  921.9  17260585  921.9
-    ## Vcells 102965853 785.6  168094202 1282.5 262547360 2003.1
+    ## Ncells  10599628 566.1   17337490  926.0  17337490  926.0
+    ## Vcells 102965967 785.6  168094291 1282.5 262547476 2003.1
 
 #### Assay joining
 
@@ -795,12 +798,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10603286 566.3   17260585  921.9  17260585  921.9
-    ## Vcells 66467937 507.2  168109287 1282.6 262547360 2003.1
+    ## Ncells 10603321 566.3   17337490  926.0  17337490  926.0
+    ## Vcells 66468051 507.2  168109549 1282.6 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10603290 566.3   17260585  921.9  17260585  921.9
-    ## Vcells 66467980 507.2  168109287 1282.6 262547360 2003.1
+    ## Ncells 10603325 566.3   17337490  926.0  17337490  926.0
+    ## Vcells 66468094 507.2  168109549 1282.6 262547476 2003.1
 
 #### Filtering: Remove highly missing precursors
 
@@ -827,12 +830,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10603453 566.3   17260585  921.9  17260585  921.9
-    ## Vcells 65207249 497.5  168109287 1282.6 262547360 2003.1
+    ## Ncells 10603488 566.3   17337490  926.0  17337490  926.0
+    ## Vcells 65207359 497.5  168109549 1282.6 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10603460 566.3   17260585  921.9  17260585  921.9
-    ## Vcells 65207297 497.5  168109287 1282.6 262547360 2003.1
+    ## Ncells 10603495 566.3   17337490  926.0  17337490  926.0
+    ## Vcells 65207407 497.5  168109549 1282.6 262547476 2003.1
 
 #### Filter one-hit wonders
 
@@ -878,12 +881,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10603455 566.3   17260585  921.9  17260585  921.9
-    ## Vcells 65207379 497.5  168109287 1282.6 262547360 2003.1
+    ## Ncells 10603490 566.3   17337490  926.0  17337490  926.0
+    ## Vcells 65207493 497.5  168109549 1282.6 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10603462 566.3   17260585  921.9  17260585  921.9
-    ## Vcells 65207427 497.5  168109287 1282.6 262547360 2003.1
+    ## Ncells 10603497 566.3   17337490  926.0  17337490  926.0
+    ## Vcells 65207541 497.5  168109549 1282.6 262547476 2003.1
 
 ### Log-transformation
 
@@ -928,7 +931,7 @@ qf[, , "precursors_log"] |> #1.
     ##   removing 54 sampleMap rows not in names(experiments)
     ##   removing 18 colData rownames not in sampleMap 'primary'
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-16-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-17-1.png)
 
 ``` r
 
@@ -949,7 +952,7 @@ qf[, , "precursorsPTM_log"] |> #1.
     ##   removing 54 sampleMap rows not in names(experiments)
     ##   removing 18 colData rownames not in sampleMap 'primary'
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-16-2.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-17-2.png)
 
 The data seems very clean. However, normalisation is still required.
 
@@ -1133,12 +1136,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 10528069 562.3   17260585  921.9  17260585  921.9
-    ## Vcells 31861417 243.1  134759552 1028.2 262547360 2003.1
+    ## Ncells 10528104 562.3   17337490  926.0  17337490  926.0
+    ## Vcells 31861531 243.1  134487640 1026.1 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10528073 562.3   17260585 921.9  17260585  921.9
-    ## Vcells 31861460 243.1  107807642 822.6 262547360 2003.1
+    ## Ncells 10528108 562.3   17337490 926.0  17337490  926.0
+    ## Vcells 31861574 243.1  107590112 820.9 262547476 2003.1
 
 Note, that normalisation could have been avoided by using
 Precursor.Normalised which is already internally normalised by DIA-NN.
@@ -1227,12 +1230,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10544357 563.2   17260585 921.9  17260585  921.9
-    ## Vcells 32332669 246.7  107807642 822.6 262547360 2003.1
+    ## Ncells 10544392 563.2   17337490 926.0  17337490  926.0
+    ## Vcells 32332783 246.7  107590112 820.9 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10544364 563.2   17260585 921.9  17260585  921.9
-    ## Vcells 32332717 246.7  107807642 822.6 262547360 2003.1
+    ## Ncells 10544399 563.2   17337490 926.0  17337490  926.0
+    ## Vcells 32332831 246.7  107590112 820.9 262547476 2003.1
 
 ## Data exploration and QC
 
@@ -1298,12 +1301,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10574021 564.8   17260585 921.9  17260585  921.9
-    ## Vcells 35980141 274.6  107807642 822.6 262547360 2003.1
+    ## Ncells 10574056 564.8   17337490 926.0  17337490  926.0
+    ## Vcells 35980251 274.6  107590112 820.9 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10574028 564.8   17260585 921.9  17260585  921.9
-    ## Vcells 35980189 274.6  107807642 822.6 262547360 2003.1
+    ## Ncells 10574063 564.8   17337490 926.0  17337490  926.0
+    ## Vcells 35980299 274.6  107590112 820.9 262547476 2003.1
 
 #### Charge state
 
@@ -1337,12 +1340,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10581526 565.2   17260585 921.9  17260585  921.9
-    ## Vcells 36177479 276.1  107807642 822.6 262547360 2003.1
+    ## Ncells 10581564 565.2   17337490 926.0  17337490  926.0
+    ## Vcells 36177598 276.1  107590112 820.9 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10581536 565.2   17260585 921.9  17260585  921.9
-    ## Vcells 36177532 276.1  107807642 822.6 262547360 2003.1
+    ## Ncells 10581571 565.2   17337490 926.0  17337490  926.0
+    ## Vcells 36177646 276.1  107590112 820.9 262547476 2003.1
 
 ### Identifications per sample
 
@@ -1397,12 +1400,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10638626 568.2   17260585 921.9  17260585  921.9
-    ## Vcells 29890775 228.1   86246114 658.1 262547360 2003.1
+    ## Ncells 10638661 568.2   17337490 926.0  17337490  926.0
+    ## Vcells 29890889 228.1   86072090 656.7 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10638606 568.2   17260585 921.9  17260585  921.9
-    ## Vcells 29890778 228.1   86246114 658.1 262547360 2003.1
+    ## Ncells 10638641 568.2   17337490 926.0  17337490  926.0
+    ## Vcells 29890892 228.1   86072090 656.7 262547476 2003.1
 
 ### Dimensionality reduction plot
 
@@ -1428,12 +1431,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10660743 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 29955806 228.6   86246114 658.1 262547360 2003.1
+    ## Ncells 10660778 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 29955920 228.6   86072090 656.7 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10660732 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 29955824 228.6   86246114 658.1 262547360 2003.1
+    ## Ncells 10660767 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 29955938 228.6   86072090 656.7 262547476 2003.1
 
 ### Non-enriched runs
 
@@ -1534,12 +1537,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10661217 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 31081256 237.2  103575336 790.3 262547360 2003.1
+    ## Ncells 10661255 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 31081371 237.2  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10661224 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 31081304 237.2  103575336 790.3 262547360 2003.1
+    ## Ncells 10661259 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 31081414 237.2  105309479 803.5 262547476 2003.1
 
 #### Charge state
 
@@ -1573,12 +1576,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10661219 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 48243473 368.1  103575336 790.3 262547360 2003.1
+    ## Ncells 10661254 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 48243587 368.1  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10661226 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 48243521 368.1  103575336 790.3 262547360 2003.1
+    ## Ncells 10661261 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 48243635 368.1  105309479 803.5 262547476 2003.1
 
 #### Identifications per sample
 
@@ -1628,12 +1631,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10661352 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 29941762 228.5  103575336 790.3 262547360 2003.1
+    ## Ncells 10661369 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 29941850 228.5  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10661338 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 29941775 228.5  103575336 790.3 262547360 2003.1
+    ## Ncells 10661373 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 29941893 228.5  105309479 803.5 262547476 2003.1
 
 ### Dimensionality reduction plot
 
@@ -1654,12 +1657,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10660918 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 29942962 228.5  103575336 790.3 262547360 2003.1
+    ## Ncells 10660953 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 29943076 228.5  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 10660907 569.4   17260585 921.9  17260585  921.9
-    ## Vcells 29942980 228.5  103575336 790.3 262547360 2003.1
+    ## Ncells 10660942 569.4   17337490 926.0  17337490  926.0
+    ## Vcells 29943094 228.5  105309479 803.5 262547476 2003.1
 
 ## Data Modeling at phospho-precursor-level
 
@@ -1692,12 +1695,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11361922 606.8   17260585 921.9  17260585  921.9
-    ## Vcells 31934259 243.7  103575336 790.3 262547360 2003.1
+    ## Ncells 11361954 606.8   17337490 926.0  17337490  926.0
+    ## Vcells 31934364 243.7  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11361929 606.8   17260585 921.9  17260585  921.9
-    ## Vcells 31934307 243.7  103575336 790.3 262547360 2003.1
+    ## Ncells 11361964 606.8   17337490 926.0  17337490  926.0
+    ## Vcells 31934417 243.7  105309479 803.5 262547476 2003.1
 
 ### Inference
 
@@ -1798,12 +1801,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11518736 615.2   17260585 921.9  17260585  921.9
-    ## Vcells 34491172 263.2  103575336 790.3 262547360 2003.1
+    ## Ncells 11518771 615.2   17337490 926.0  17337490  926.0
+    ## Vcells 34491282 263.2  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11518740 615.2   17260585 921.9  17260585  921.9
-    ## Vcells 34491215 263.2  103575336 790.3 262547360 2003.1
+    ## Ncells 11518775 615.2   17337490 926.0  17337490  926.0
+    ## Vcells 34491325 263.2  105309479 803.5 262547476 2003.1
 
 ### Report results
 
@@ -2521,7 +2524,7 @@ plotVolcano(inferencesPTM) +
   labs(title = "Precursor-level Phospho DA")
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-31-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-32-1.png)
 
 ``` r
 
@@ -2536,7 +2539,7 @@ inferencesPTM |>
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-32-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-33-1.png)
 
 #### Heatmaps
 
@@ -2596,12 +2599,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11737957 626.9   17260585 921.9  17260585  921.9
-    ## Vcells 34967479 266.8  103575336 790.3 262547360 2003.1
+    ## Ncells 11738072 626.9   17337490 926.0  17337490  926.0
+    ## Vcells 34967593 266.8  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11737964 626.9   17260585 921.9  17260585  921.9
-    ## Vcells 34967527 266.8  103575336 790.3 262547360 2003.1
+    ## Ncells 11738079 626.9   17337490 926.0  17337490  926.0
+    ## Vcells 34967641 266.8  105309479 803.5 262547476 2003.1
 
 #### Detail plots
 
@@ -2741,12 +2744,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11747169 627.4   17260585 921.9  17260585  921.9
-    ## Vcells 34976937 266.9  103575336 790.3 262547360 2003.1
+    ## Ncells 11747284 627.4   17337490 926.0  17337490  926.0
+    ## Vcells 34977051 266.9  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11747173 627.4   17260585 921.9  17260585  921.9
-    ## Vcells 34976980 266.9  103575336 790.3 262547360 2003.1
+    ## Ncells 11747288 627.4   17337490 926.0  17337490  926.0
+    ## Vcells 34977094 266.9  105309479 803.5 262547476 2003.1
 
 ## Data Modeling at protein-level (non-enriched samples)
 
@@ -2774,12 +2777,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11844694 632.6   17260585 921.9  17260585  921.9
-    ## Vcells 35268943 269.1  103575336 790.3 262547360 2003.1
+    ## Ncells 11844809 632.6   17337490 926.0  17337490  926.0
+    ## Vcells 35269057 269.1  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11844701 632.6   17260585 921.9  17260585  921.9
-    ## Vcells 35268991 269.1  103575336 790.3 262547360 2003.1
+    ## Ncells 11844816 632.6   17337490 926.0  17337490  926.0
+    ## Vcells 35269105 269.1  105309479 803.5 262547476 2003.1
 
 ### Inference
 
@@ -2806,12 +2809,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11858794 633.4   17260585 921.9  17260585  921.9
-    ## Vcells 35556724 271.3  103575336 790.3 262547360 2003.1
+    ## Ncells 11858909 633.4   17337490 926.0  17337490  926.0
+    ## Vcells 35556834 271.3  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11858798 633.4   17260585 921.9  17260585  921.9
-    ## Vcells 35556767 271.3  103575336 790.3 262547360 2003.1
+    ## Ncells 11858913 633.4   17337490 926.0  17337490  926.0
+    ## Vcells 35556877 271.3  105309479 803.5 262547476 2003.1
 
 ### Report results
 
@@ -4569,7 +4572,7 @@ qf[target_feature, , c("precursors_log","precursors_norm", "proteins")] |> #1
     ## Warning: Removed 86 rows containing missing values or values outside the scale range
     ## (`geom_point()`).
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-38-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-39-1.png)
 
 ``` r
 
@@ -4596,7 +4599,7 @@ qf[target_feature, , c("precursors_log","precursors_norm", "proteins")] |> #1
     ##   removing 72 sampleMap rows not in names(experiments)
     ##   removing 18 colData rownames not in sampleMap 'primary'
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-39-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-40-1.png)
 
 #### Compare phospo-precursor level intensities to protein level intensities
 
@@ -4671,12 +4674,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11869854 634.0   17260585 921.9  17260585  921.9
-    ## Vcells 35598905 271.6  103575336 790.3 262547360 2003.1
+    ## Ncells 11869773 634.0   17337490 926.0  17337490  926.0
+    ## Vcells 35598495 271.6  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11869858 634.0   17260585 921.9  17260585  921.9
-    ## Vcells 35598948 271.6  103575336 790.3 262547360 2003.1
+    ## Ncells 11869768 634.0   17337490 926.0  17337490  926.0
+    ## Vcells 35598523 271.6  105309479 803.5 262547476 2003.1
 
 We see for multiple top DA phospho-precursors, that the reason for DA
 seems to be associated with the similar changes in overall protein
@@ -4859,7 +4862,7 @@ qf[, , "precursorsPTM_usage"] |> #1.
     ##   removing 126 sampleMap rows not in names(experiments)
     ##   removing 18 colData rownames not in sampleMap 'primary'
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-44-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-45-1.png)
 
 ``` r
 
@@ -4868,12 +4871,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11885413 634.8   17260585 921.9  17260585  921.9
-    ## Vcells 44061320 336.2  103575336 790.3 262547360 2003.1
+    ## Ncells 11885323 634.8   17337490 926.0  17337490  926.0
+    ## Vcells 44060895 336.2  105309479 803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger  (Mb)  max used   (Mb)
-    ## Ncells 11885420 634.8   17260585 921.9  17260585  921.9
-    ## Vcells 44061368 336.2  103575336 790.3 262547360 2003.1
+    ## Ncells 11885330 634.8   17337490 926.0  17337490  926.0
+    ## Vcells 44060943 336.2  105309479 803.5 262547476 2003.1
 
 ### Model estimation
 
@@ -4899,12 +4902,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 12550379 670.3   21990638 1174.5  21990638 1174.5
-    ## Vcells 45896451 350.2  103575336  790.3 262547360 2003.1
+    ## Ncells 12550292 670.3   22875954 1221.8  17337490  926.0
+    ## Vcells 45896031 350.2  105309479  803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 12550389 670.3   21990638 1174.5  21990638 1174.5
-    ## Vcells 45896504 350.2  103575336  790.3 262547360 2003.1
+    ## Ncells 12550299 670.3   22875954 1221.8  17337490  926.0
+    ## Vcells 45896079 350.2  105309479  803.5 262547476 2003.1
 
 ### Inference
 
@@ -4931,12 +4934,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 12550460 670.3   21990638 1174.5  21990638 1174.5
-    ## Vcells 46702881 356.4  103575336  790.3 262547360 2003.1
+    ## Ncells 12550370 670.3   22875954 1221.8  22875954 1221.8
+    ## Vcells 46702456 356.4  105309479  803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 12550464 670.3   21990638 1174.5  21990638 1174.5
-    ## Vcells 46702924 356.4  103575336  790.3 262547360 2003.1
+    ## Ncells 12550374 670.3   22875954 1221.8  22875954 1221.8
+    ## Vcells 46702499 356.4  105309479  803.5 262547476 2003.1
 
 ### Report results
 
@@ -5211,7 +5214,7 @@ plotVolcano(inferencesUsage) +
   labs(title = "Usage")
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-48-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-49-1.png)
 
 ``` r
 
@@ -5226,7 +5229,7 @@ inferencesUsage |>
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-49-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-50-1.png)
 
 We observe that the number of significant precursors reduced
 drastically.
@@ -5378,7 +5381,7 @@ outplot <- ptm_protein |>
 print(outplot)
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-51-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-52-1.png)
 
 ``` r
 
@@ -5398,7 +5401,7 @@ rbind(ptm, protein) %>%
   }
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-52-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-53-1.png)
 
 We compare the intensities for the top 5 DA phospo-precursors for the
 first contrast to these of their corresponding protein in the
@@ -5545,12 +5548,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 12551685 670.4   21990638 1174.5  21990638 1174.5
-    ## Vcells 40700605 310.6  103575336  790.3 262547360 2003.1
+    ## Ncells 12551595 670.4   22875954 1221.8  22875954 1221.8
+    ## Vcells 40700176 310.6  105309479  803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 12551689 670.4   21990638 1174.5  21990638 1174.5
-    ## Vcells 40700648 310.6  103575336  790.3 262547360 2003.1
+    ## Ncells 12551599 670.4   22875954 1221.8  22875954 1221.8
+    ## Vcells 40700219 310.6  105309479  803.5 262547476 2003.1
 
 ## Differential usage analysis at the PTM level
 
@@ -5675,7 +5678,7 @@ qf[, , "ptm_usage"] |> #1.
     ##   removing 162 sampleMap rows not in names(experiments)
     ##   removing 18 colData rownames not in sampleMap 'primary'
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-56-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-57-1.png)
 
 We remove temporarily objects
 
@@ -5691,12 +5694,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 12735600 680.2   21990638 1174.5  21990638 1174.5
-    ## Vcells 47976822 366.1  103575336  790.3 262547360 2003.1
+    ## Ncells 12735510 680.2   22875954 1221.8  22875954 1221.8
+    ## Vcells 47976397 366.1  105309479  803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 12735604 680.2   21990638 1174.5  21990638 1174.5
-    ## Vcells 47976865 366.1  103575336  790.3 262547360 2003.1
+    ## Ncells 12735514 680.2   22875954 1221.8  22875954 1221.8
+    ## Vcells 47976440 366.1  105309479  803.5 262547476 2003.1
 
 ### Model estimation
 
@@ -5721,12 +5724,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 13169396 703.4   21990638 1174.5  21990638 1174.5
-    ## Vcells 49229258 375.6  103575336  790.3 262547360 2003.1
+    ## Ncells 13169306 703.4   22875954 1221.8  22875954 1221.8
+    ## Vcells 49228833 375.6  105309479  803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 13169403 703.4   21990638 1174.5  21990638 1174.5
-    ## Vcells 49229306 375.6  103575336  790.3 262547360 2003.1
+    ## Ncells 13169313 703.4   22875954 1221.8  22875954 1221.8
+    ## Vcells 49228881 375.6  105309479  803.5 262547476 2003.1
 
 ### Inference
 
@@ -5753,12 +5756,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 13231946 706.7   21990638 1174.5  21990638 1174.5
-    ## Vcells 50523998 385.5  103575336  790.3 262547360 2003.1
+    ## Ncells 13231856 706.7   22875954 1221.8  22875954 1221.8
+    ## Vcells 50523573 385.5  105309479  803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 13231950 706.7   21990638 1174.5  21990638 1174.5
-    ## Vcells 50524041 385.5  103575336  790.3 262547360 2003.1
+    ## Ncells 13231860 706.7   22875954 1221.8  22875954 1221.8
+    ## Vcells 50523616 385.5  105309479  803.5 262547476 2003.1
 
 ### Report results
 
@@ -6002,7 +6005,7 @@ plotVolcano(inferencesPtmUsage) +
   labs(title = "PTM Usage")
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-61-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-62-1.png)
 
 ``` r
 
@@ -6017,7 +6020,7 @@ inferencesPtmUsage |>
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-62-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-63-1.png)
 
 #### Heatmaps
 
@@ -6162,7 +6165,7 @@ ptm_protein |>
   theme(axis.text.x = element_blank())
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-64-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-65-1.png)
 
 ``` r
 
@@ -6188,7 +6191,7 @@ rbind(ptm, precursor, protein) %>%
     ## Warning: Removed 24 rows containing missing values or values outside the scale range
     ## (`geom_point()`).
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-65-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-66-1.png)
 
 ``` r
 
@@ -6197,12 +6200,12 @@ gc(); gc()
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 13232798 706.8   21990638 1174.5  21990638 1174.5
-    ## Vcells 46346755 353.6  103575336  790.3 262547360 2003.1
+    ## Ncells 13232705 706.8   22875954 1221.8  22875954 1221.8
+    ## Vcells 46346325 353.6  105309479  803.5 262547476 2003.1
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 13232799 706.8   21990638 1174.5  21990638 1174.5
-    ## Vcells 46346793 353.6  103575336  790.3 262547360 2003.1
+    ## Ncells 13232709 706.8   22875954 1221.8  22875954 1221.8
+    ## Vcells 46346368 353.6  105309479  803.5 262547476 2003.1
 
 ### Along Protein Mapping
 
@@ -6291,7 +6294,7 @@ ptmListProt |>
   facet_grid(contrast~.) 
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-70-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-71-1.png)
 
 #### Along protein plot for all precursors
 
@@ -6394,7 +6397,7 @@ precursorListProt |>
            subtitle = "(phospho residue in black vertical line)") 
 ```
 
-![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-73-1.png)
+![](msqrob2PTM_diann_study_paired_files/figure-html/unnamed-chunk-74-1.png)
 
 [^1]: The ion selection for MS2 depends on the data recorded in MS1.
     Therefore, this approach is referred to as data dependent
