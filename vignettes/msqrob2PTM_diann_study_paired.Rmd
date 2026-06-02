@@ -114,7 +114,7 @@ to deconvolute the complex MS2 spectra so as to identify and quantify individual
 precursors (MS1) in the m/z window using their MS2 fragments. 
 Hence, the quantification can be done using either MS1 or MS2.
 
-```{r, echo = FALSE, out.width = "60%", fig.cap = "Data-independent acquisition."}
+```{r, echo = FALSE, out.width = "90%", fig.cap = "Data-independent acquisition."}
 knitr::include_graphics("https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/dia.png")
 ```
 
