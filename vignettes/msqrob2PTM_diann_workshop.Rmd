@@ -115,11 +115,14 @@ to deconvolute the complex MS2 spectra so as to identify and quantify individual
 precursors (MS1) in the m/z window using their MS2 fragments. 
 Hence, the quantification can be done using either MS1 or MS2.
 
-![](https://www.creative-proteomics.com/blog/wp-content/uploads/2024/01/principles-applications-and-comparative-workflow-of-dia-and-dda.jpg)
+```{r, echo = FALSE, out.width = "60%", fig.cap = "Data-independent acquisition."}
+knitr::include_graphics("https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/dia.png")
+```
+
 
 - m/z range into sequential windows (e.g., 400–425, 425–450 m/z) 
 - MS2 spectra are complex as many peptides mixed
-- Deconvolution of the MS2 signal 
+- Deconvolution of the MS2 signal using ion mobility and retention time
 - With dedicated software such as Spectronaut or DIA-NN
 
     - Identification based on spectral libraries
