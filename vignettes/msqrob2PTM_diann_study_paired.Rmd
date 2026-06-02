@@ -48,6 +48,7 @@ In this vignette we start from quantified precursor level data to infer
 using the msqrob2PTM workflow in the bioconductor package [msqrob2](https://www.bioconductor.org/packages/release/bioc/html/msqrob2.html). 
 
 You can read more about 
+
 - `msqrob2` on [https://statomics.github.io/msqrob2book/](https://statomics.github.io/msqrob2book/) 
 - `msqrob2PTM` in msqrob2PTM: Differential Abundance and Differential Usage 
   Analysis of MS-Based Proteomics Data at the Posttranslational Modification and 
@@ -343,6 +344,12 @@ precursorsPTM <- precursorsPTM |>
          RT)
 ```
 
+```{r}
+precursorsPTM |> 
+  select(Protein.Sites, Modified.Sequence, Stripped.Sequence) |> 
+  head(20)
+```
+
 Garbage collection to free space 
 
 ```{r}
@@ -600,7 +607,7 @@ gc(); gc()
 ### Assay joining
 
 - Up to now, the data from different runs were kept in separate assays. 
-- We can now join the normalised sets into an precursor set using joinAssays(). 
+- We can now join the filtered sets into an precursor set using joinAssays(). 
 - Sets are joined by stacking the columns (samples) in a matrix and rows 
 (features) are matched according to a row identifier, here the `Precursor.Id`.
 - We do this for the non-enriched and phospho samples, which we store in assays 
@@ -635,8 +642,8 @@ gc(); gc()
 
 ### Filtering: Remove highly missing precursors
 
-We keep peptides that were observed at last 6 times out of the 
-$n= 24$ samples, so that we can estimate the peptide characteristics. 
+We keep peptides that were observed at least 6 times out of the 
+$n = 18$ samples, so that we can estimate the peptide characteristics. 
 
 ```{r remove_precursors_with_missingness}
 nObs <- 6
@@ -655,7 +662,7 @@ We normally remove proteins that can only be found by one peptide, as such prote
 may not be trustworthy. 
 
 Here, we opt not to do this because we prefer a protein-level summary based on 
-on precursor so that we can estimate usages later on. 
+one precursor so that we can estimate usages later on. 
 
 We leave the code here for your reference. 
 But commented it out. 
@@ -712,33 +719,52 @@ qf <- logTransform(qf,
 ## Normalisation {#sec-norm}
 
 We first evaluate the distributions of the non-normalised precursors per sample.
+For this, we perform a short data
+manipulation pipeline:
+
+1. We select an assay from the `QFeatures` object, `qf`.  
+2. We use `longForm()` to convert the `QFeatures` object into a long
+table, where each row contains the quantitative information about
+one observation, in which column, row and set it was found. Long
+tables are particularly useful for manipulating data with the
+`tidyverse` ecosystem, namely with `ggplot2` for visualisation.
+`longForm()` also allows to include annotations, and we here
+include all variables from the colData for filtering and colouring.
+3. `longForm()` returns a `DataFrame` which we convert to a
+`data.frame`.
+4. We filter out the missing values. 
+5. We make a plot with ggplot.
+6. We add aesthetics, we select the log2-intensities (`value`) as x, and color 
+   according to the strain and group according to the colname.
+7. We add a geom_dens layer to add a density plot. 
+8. We add a title.
+9. Use a minimal theme.
 
 ```{r}
 qf[, , "precursors_log"] |> #1.
   longForm(colvars = colnames(colData(qf))) |>  #2. 
-  data.frame() |> 
-  filter(!is.na(value)) |>
-  ggplot() + #3.
+  data.frame() |> #3.
+  filter(!is.na(value)) |> #4.
+  ggplot() + #5.
   aes(x = value,
       colour = strain,
-      group = colname) +
-  geom_density() +
-  labs(subtitle = "precursors") +
-  theme_minimal()
+      group = colname) + #6.
+  geom_density() + #7. 
+  labs(subtitle = "precursors") + #8.
+  theme_minimal() #9.
   
 qf[, , "precursorsPTM_log"] |> #1.
-  longForm(colvars = colnames(colData(qf))) |>  #2. 
-  data.frame() |> 
-  filter(!is.na(value)) |>
-  ggplot() + #3.
-  aes(x = value,
+  longForm(colvars = colnames(colData(qf))) |>  #2.
+  data.frame() |> #3.
+  filter(!is.na(value)) |> #4.
+  ggplot() + #5.
+  aes(x = value, 
       colour = strain,
-      group = colname) +
-  geom_density() +
-  labs(subtitle = "PTM - precursors") +
-  theme_minimal()
+      group = colname) + #6.
+  geom_density() + #7. 
+  labs(subtitle = "PTM - precursors") + #8. 
+  theme_minimal() #9. 
 ```
-
 
 The data seems very clean. However, normalisation is still required. 
 
@@ -882,7 +908,7 @@ their shared precursors.
 - It then estimates the summaries by solving 
 
 $$
-\sum_i\sum_j(y^{prot}_j - y^{prot}_i - r_ij)^2
+\sum_i\sum_j(y^{prot}_j - y^{prot}_i - r_{ij})^2
 $$
 
 It is implemented in the `maxLFQ` function of the `iq` package. 
@@ -1621,7 +1647,7 @@ qf[target_feature, , c("precursors_log","precursors_norm", "proteins")] |> #1
   longForm(colvars = colnames(colData(qf))) |> #2
   data.frame() |> 
   ggplot() +
-  aes(x = colname,
+  aes(x = sampleId,
       y = value) +
   geom_line(aes(group = rowname), linewidth = 0.1) +
   geom_point(aes(colour = strain)) +
@@ -1725,7 +1751,7 @@ be associated with the similar changes in overall protein abundance.
 Interestingly for other phospho-precursors the abundance of the precursor 
 changes between strains while the abundances at the protein-level remains stable 
 between strains.
-Hence, there is a stron need to correct the phospho-precursor level fold changes/
+Hence, there is a strong need to correct the phospho-precursor level fold changes/
 abundances for corresponding changes at the protein level.
   
 
@@ -1761,7 +1787,7 @@ peptidoform level. $\rightarrow$ Immediately gives us diferential usages!
     
 4. Optionally 
     
-  a. aggregate relative log2 transformed abundances at peptidoform level at 
+  a. aggregate relative log2 transformed abundances at peptidoform level to 
      PTM-level
   b. perform a differential msqrob2 analysis at PTM-level
 
@@ -1808,7 +1834,7 @@ It has following inputs:
 
 The function 
 
-1. initiates the matrix with log2 tranformed correction factors at NA. 
+1. Initiates the matrix with log2 tranformed correction factors at NA. 
 2. Matches the rows of se with these of seNE using the annotation columns
 3. Extracts the protein abundance values for the precursors from the matching 
   rows and columns in the protein level assay.
@@ -1833,10 +1859,10 @@ calculate_usage_nfLog <- function(se,
 
 Here we 
 
-1. match the samples of the phosho enriched samples to these of the 
+1. Match the samples of the phosho enriched samples to these of the 
 non-enriched assay. 
-2. calculate the correction factors 
-3. make a new assay with usages by sweeping out the log2 protein abundances from 
+2. Calculate the correction factors 
+3. Make a new assay with usages by sweeping out the log2 protein abundances from 
    from the log2 precursor abundances.   
    
 ```{r}
@@ -2024,8 +2050,8 @@ lapply(colnames(L),
 
 We can explore the data for a protein to validate the statistical inference 
 results. For example, let’s explore the normalised precursor abundance, usages 
-as well as the summarised protein intensities for the protein with the most 
-significant log2 fold change.
+as well as the summarised protein intensities for the precursor with the most 
+significant log2 usage.
 
 ```{r}
 (target_feature <- inferencesUsage |> 
@@ -2057,7 +2083,7 @@ ylims <- ptm_protein |>
 
 outplot <- ptm_protein |>
   ggplot() +
-  aes(x = colname,
+  aes(x = sampleId,
       y = value) +
   geom_line(aes(group = rowname), linewidth = 0.1) +
   geom_point(aes(colour = strain)) +
