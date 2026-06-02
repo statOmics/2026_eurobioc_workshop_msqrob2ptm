@@ -362,11 +362,12 @@ In DIA-NN phosphorylation is indicated with (UniMod:21) in the sequence stored i
 variable `Modified.Sequence`. This variable contains the precursor sequence 
 along with its modifications. 
 
-Here, we only keep precursors that are phosphorylated. 
+Here, we only keep precursors that are phosphorylated, i.e. with pattern 
+`(UniMod:21)` in the variable `Modified.Sequence`. 
 
 ```{r}
 precursorsPTM <- precursorsPTM |>
-  filter(grepl(pattern = "\\(UniMod:21\\)", Modified.Sequence))
+  filter(grepl(pattern = "\\(UniMod:21\\)", Modified.Sequence)) 
 ```
 
 Garbage collection to free space 
@@ -1754,22 +1755,38 @@ between strains.
 Hence, there is a strong need to correct the phospho-precursor level fold changes/
 abundances for corresponding changes at the protein level.
   
-
 # Data Modeling of phospho-peptidoform usages
 
 ## Background 
 
-- Differential abundant PTMs can be due protein abundance
+- Differentially abundant PTMs can arise either from changes in PTM regulation 
+  or simply from changes in the abundance of the underlying protein.
 
-- Port concept of differential usage towards PTMs: 
+- To distinguish PTM-specific regulation from protein-level changes, 
+  we extend the concept of *differential usage* (DU) to PTMs:
 
-$$\log_2 DU = \log_2 FC^\text{PTM} - log_2 FC^\text{protein}$$
+$$
+\log_2 DU = \log_2 FC^\text{PTM} - \log_2 FC^\text{protein},
+$$
 
-Two designs: PTM and protein level quantification be done 
+where $log_2 FC^\text{PTM}$ is the fold change of the modified precursor/PTM 
+and $log_2 FC^\text{protein}$ is the fold change of the corresponding protein.
 
-- on same sample: paired design 
-- using independent samples
+- In other words, differential usage represents the differential abundance (DA) 
+  of a PTM after correcting for changes in protein abundance.
 
+- This metric highlights PTMs whose abundance changes cannot be explained solely 
+  by changes in the total protein level, thereby prioritising PTMs that may be 
+  under specific regulatory control.
+
+Two experimental designs are commonly used to quantify precursor-level 
+  (PTM-level) and protein-level abundances:
+
+  - **Paired design:** PTM and protein abundances are measured in the same 
+    biological replicate (sample).
+  
+  - **Unpaired design:** PTM and protein abundances are measured in independent 
+    biological replicates (different samples).
 
 ### Paired samples 
 
@@ -1791,6 +1808,9 @@ peptidoform level. $\rightarrow$ Immediately gives us diferential usages!
      PTM-level
   b. perform a differential msqrob2 analysis at PTM-level
 
+5. The paired design has the advantage that both metrics are estimated on the same
+   biorepeat/sample, which enables a better estimation of the standard error on 
+   the usages.
 
 ### Unpaired PTM-level and protein samples 
 
@@ -2263,7 +2283,7 @@ We can aggregate them together.
 
 ## Data processing 
 
-The variable Protein.Sites in the DIA-NN parquet file contains information on the 
+The variable `Protein.Sites` in the DIA-NN parquet file contains information on the 
 exact modified residue position in the full protein sequence. 
 
 We first will make a new assay with duplicates for the precursors that contain 
@@ -2271,10 +2291,21 @@ multiple phospho sites.
 
 1. We extract the usage assay 
 2. We extract the row data with the original variables (drop msqrob2 colums)
-3. Add a new variable with the modification type (21 is phosho)
+3. Add a new variable with the modification type, which can derived from the 
+   variable `Modified.Sequence`. Indeed, all modifications start with string 
+   "UniMod:" followed by a number, i.e. 21 is a phoshorylation. So we extract 
+   all patterns "UniMod:[0-9]+" (`UniMod:` to match the literal text "UniMod:",
+   `[0-9]` to	match any digit (0–9) and `+` to	match one or more digits. We 
+   then replace pattern `Uniprot:` with an empty string.
 4. Add a new variable with the location of the modification on the original 
-   protein
-5. replace the rowData of se
+   protein, which can be extracted from the variable `Protein.Sites`. Indeed, 
+   this variables contains the residu and its position in the protein sequence. 
+   If the sequence contains multiple modifications, the sites are separated 
+   with a `,`. Regex `(?<=:)[^\]]+` extracts all characters immediately after 
+   the colon without returning the colon and ignores `]`, e.g. for 
+   "[P52871:A2,S4]" it will return "A2,S4". The resulting string is then 
+   splitted and subsequently the residue (first character) is removed.
+5. Replace the rowData of se
 6. Make vector of the row numbers with duplicates for the sequences containing 
    multiple PTMs
 7. Make a corresponding vector with the positions of the individual PTM sites
