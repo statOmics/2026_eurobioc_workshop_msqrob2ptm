@@ -211,28 +211,28 @@ or (e.g. for Apple ARM architecture)
   
 - Open Noppe at https://noppe.2.rahtiapp.fi/
 
-![noppe1](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/figures/noppe1.png)
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/noppe1.png)
 
 - Login using special login using the given user [name and password](https://docs.google.com/spreadsheets/d/1sZNG_GyvmgcVhkXWmJbLpQV6lm0tqaQV/edit?gid=1839105855#gid=1839105855)
 
-![noppe2](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/figures/noppe2.png)
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/noppe2.png)
 
 - Click on the top right corner to join workspace using the join code 60w4ajhuvynf 
 
-![noppe3](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/figures/noppe3.png)
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/noppe3.png)
 
 - Accept and choose the applications you would like to work on click on start the session
 
-![noppe4](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/figures/noppe4.png)
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/noppe4.png)
 
 - Wait the application session to start 
 
-![noppe5](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/figures/noppe5.png)
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/noppe5.png)
 
 - Container is running
 
-![noppe6](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/figures/noppe6.png)
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/noppe6.png)
 
 - R-studio should appear if you click on the application
 
-![noppe7](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/figures/noppe7.png)
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/noppe7.png)
