@@ -58,7 +58,7 @@
                         <h4 data-toc-skip class="author">Lieven Clement,
 Nina Demeulemeester, Luca De Corso and Lucas Beerland</h4>
                         
-            <h4 data-toc-skip class="date">3 June 2026</h4>
+            <h4 data-toc-skip class="date">4 June 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/blob/devel/vignettes/msqrob2PTM_diann_workshop.Rmd" class="external-link"><code>vignettes/msqrob2PTM_diann_workshop.Rmd</code></a></small>
       <div class="d-none name"><code>msqrob2PTM_diann_workshop.Rmd</code></div>
@@ -287,7 +287,9 @@ prepared and quantified using a data independent acquisition
 workflow.</p>
 <p>The data for the non-enriched and phospho-enriched samples are
 deposited to PRIDE, dataset identifiers PXD068388 and PXD068392).</p>
-<p>Summary:</p>
+<div class="section level4">
+<h4 id="summary">Summary:<a class="anchor" aria-label="anchor" href="#summary"></a>
+</h4>
 <ul>
 <li>Mutations in tRNAs can lead to mis-incorporation of amino acids
 during protein translation.</li>
@@ -298,10 +300,53 @@ Ser).</li>
 <li>For each biological repeat: non-enriched and phospho-enriched MS
 run.</li>
 </ul>
+</div>
+<div class="section level4">
+<h4 id="summary-1">Summary:<a class="anchor" aria-label="anchor" href="#summary-1"></a>
+</h4>
+<ul>
+<li>Mutations in tRNAs can lead to mis-incorporation of amino acids
+during protein translation.</li>
+<li>4 strains: WT, 3 strains with mutations leading to
+miss-incorporations (Pro -&gt; Ala, Pro -&gt; Ser and Arg -&gt;
+Ser).</li>
+<li>6 biological repeats per strain</li>
+<li>Here we use the non-enriched MS runs from three random bio-repeats
+and phospho-enriched MS runs from the other three bio-repeats so as to
+have unpaired samples.</li>
+</ul>
+<div class="figure">
+<img src="https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/figureExperiment.jpeg" class="r-plt" alt="'tRNA variants induce mistranslation. a) Schematic representing the three mistranslating tRNAs used in this study. b) Mistranslation frequency for each strain determined by mass spectrometry. Wild-type yeast strain BY4741 expressing either an empty vector control or a mistranslating tRNA variant were grown in minimal media lacking uracil to an OD600 of ∼1.0 and mass spectrometry analysis of the cellular proteome was performed. The percent of unique peptides detected with either proline to alanine, proline to serine or arginine to serine substitutions was calculated for each respective variant and the control strain. c) Growth rate for the control strain and strains expressing each mistranslating tRNA was determined from growth curves performed in minimal media lacking uracil. Strains were diluted to an OD600 of ∼0.1 and grown for 24 h. Growth relative to the control strain, set as 1.0, was calculated from the doubling time. d) Representative growth of the control strain and strains expressing each mistranslating tRNA on solid minimal media lacking uracil. Overnight cultures of each strain were grown in minimal media lacking uracil, spotted in 10-fold serial dilutions and grown for 2 days. e) Correlation between relative growth rate of each strain as determined in (c) vs mistranslation frequency calculated by summing the total intensity of all identified mistranslated peptides and normalized to the total intensity of peptides identified in the mass spectrometry data. In all panels, each point represents 1 biological replicate.' Berg et al. 2026" width="90%"><p class="caption">
+‘tRNA variants induce mistranslation. a) Schematic representing the
+three mistranslating tRNAs used in this study. b) Mistranslation
+frequency for each strain determined by mass spectrometry. Wild-type
+yeast strain BY4741 expressing either an empty vector control or a
+mistranslating tRNA variant were grown in minimal media lacking uracil
+to an OD600 of ∼1.0 and mass spectrometry analysis of the cellular
+proteome was performed. The percent of unique peptides detected with
+either proline to alanine, proline to serine or arginine to serine
+substitutions was calculated for each respective variant and the control
+strain. c) Growth rate for the control strain and strains expressing
+each mistranslating tRNA was determined from growth curves performed in
+minimal media lacking uracil. Strains were diluted to an OD600 of ∼0.1
+and grown for 24 h. Growth relative to the control strain, set as 1.0,
+was calculated from the doubling time. d) Representative growth of the
+control strain and strains expressing each mistranslating tRNA on solid
+minimal media lacking uracil. Overnight cultures of each strain were
+grown in minimal media lacking uracil, spotted in 10-fold serial
+dilutions and grown for 2 days. e) Correlation between relative growth
+rate of each strain as determined in (c) vs mistranslation frequency
+calculated by summing the total intensity of all identified
+mistranslated peptides and normalized to the total intensity of peptides
+identified in the mass spectrometry data. In all panels, each point
+represents 1 biological replicate.’ Berg et al. 2026
+</p>
+</div>
 <p>M. Berg, A. Chang, R. Rodriguez-Mias, J. Villén, Mistranslating tRNA
 variants impact the proteome and phosphoproteome of Saccharomyces
 cerevisiae, G3 Genes|Genomes|Genetics, Volume 16, Issue 2, February
 2026, jkaf284, <a href="https://doi.org/10.1093/g3journal/jkaf284" class="external-link">https://doi.org/10.1093/g3journal/jkaf284</a></p>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -447,11 +492,11 @@ here.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10310120 550.7   17343065  926.3  12846984  686.2</span></span>
-<span><span class="co">## Vcells 61239709 467.3  210121055 1603.1 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10310161 550.7   17346340  926.4  12848928  686.3</span></span>
+<span><span class="co">## Vcells 61240936 467.3  210122232 1603.2 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10310245 550.7   17343065  926.3  12846984  686.2</span></span>
-<span><span class="co">## Vcells 61240026 467.3  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10310286 550.7   17346340  926.4  12848928  686.3</span></span>
+<span><span class="co">## Vcells 61241253 467.3  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="subset-phospho">Subset phospho<a class="anchor" aria-label="anchor" href="#subset-phospho"></a>
@@ -470,11 +515,11 @@ pattern <code>(UniMod:21)</code> in the variable
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10305995 550.4   17343065  926.3  12846984  686.2</span></span>
-<span><span class="co">## Vcells 59587612 454.7  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10306036 550.5   17346340  926.4  12848928  686.3</span></span>
+<span><span class="co">## Vcells 59588839 454.7  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10306002 550.4   17343065  926.3  12846984  686.2</span></span>
-<span><span class="co">## Vcells 59587659 454.7  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10306043 550.5   17346340  926.4  12848928  686.3</span></span>
+<span><span class="co">## Vcells 59588886 454.7  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="quick-check-for-imputation">Quick check for imputation<a class="anchor" aria-label="anchor" href="#quick-check-for-imputation"></a>
@@ -498,11 +543,11 @@ pattern <code>(UniMod:21)</code> in the variable
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##             used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells  10542146 563.1   17343065  926.3  13472869  719.6</span></span>
-<span><span class="co">## Vcells 100089550 763.7  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells  10542185 563.1   17346340  926.4  13472908  719.6</span></span>
+<span><span class="co">## Vcells 100090775 763.7  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##             used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells  10542135 563.1   17343065  926.3  13472869  719.6</span></span>
-<span><span class="co">## Vcells 100089568 763.7  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells  10542174 563.1   17346340  926.4  13472908  719.6</span></span>
+<span><span class="co">## Vcells 100090793 763.7  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="sample-annotation-tables">Sample annotation tables<a class="anchor" aria-label="anchor" href="#sample-annotation-tables"></a>
@@ -587,11 +632,11 @@ researchers included information on the design in the filenames.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##             used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells  10555529 563.8   17343065  926.3  13472869  719.6</span></span>
-<span><span class="co">## Vcells 100120047 763.9  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells  10555568 563.8   17346340  926.4  13472908  719.6</span></span>
+<span><span class="co">## Vcells 100121272 763.9  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##             used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells  10555485 563.8   17343065  926.3  13472869  719.6</span></span>
-<span><span class="co">## Vcells 100120010 763.9  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells  10555524 563.8   17346340  926.4  13472908  719.6</span></span>
+<span><span class="co">## Vcells 100121235 763.9  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -696,11 +741,11 @@ non-enriched samples in the same QFeatures <code>object</code>.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##             used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells  10596101 565.9   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 101655904 775.6  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells  10596140 565.9   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 101657125 775.6  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##             used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells  10596105 565.9   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 101655947 775.6  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells  10596144 565.9   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 101657168 775.6  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -772,11 +817,11 @@ proteins.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##             used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells  10602059 566.3   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 102971532 785.7  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells  10602098 566.3   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 102972757 785.7  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##             used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells  10602063 566.3   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 102971575 785.7  168096844 1282.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells  10602102 566.3   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 102972800 785.7  168097786 1282.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="assay-joining">Assay joining<a class="anchor" aria-label="anchor" href="#assay-joining"></a>
@@ -829,11 +874,11 @@ in assays with names: <code>precursors</code> and
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10605756 566.5   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 66473659 507.2  168115013 1282.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10605795 566.5   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 66474884 507.2  168116228 1282.7 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10605760 566.5   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 66473702 507.2  168115013 1282.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10605799 566.5   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 66474927 507.2  168116228 1282.7 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="filtering-remove-highly-missing-precursors">Filtering: Remove highly missing precursors<a class="anchor" aria-label="anchor" href="#filtering-remove-highly-missing-precursors"></a>
@@ -854,11 +899,11 @@ samples, so that we can estimate the peptide characteristics.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10605923 566.5   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 65212980 497.6  168115013 1282.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10605962 566.5   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 65214205 497.6  168116228 1282.7 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10605930 566.5   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 65213028 497.6  168115013 1282.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10605969 566.5   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 65214253 497.6  168116228 1282.7 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="filter-one-hit-wonders">Filter one-hit wonders<a class="anchor" aria-label="anchor" href="#filter-one-hit-wonders"></a>
@@ -896,11 +941,11 @@ assay</p></li>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10605925 566.5   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 65213101 497.6  168115013 1282.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10605964 566.5   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 65214326 497.6  168116228 1282.7 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10605932 566.5   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 65213149 497.6  168115013 1282.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10605971 566.5   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 65214374 497.6  168116228 1282.7 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -964,7 +1009,7 @@ according to the colname.</li>
 <pre><code><span><span class="co">## harmonizing input:</span></span>
 <span><span class="co">##   removing 54 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">##   removing 18 colData rownames not in sampleMap 'primary'</span></span></code></pre>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qf</span><span class="op">[</span>, , <span class="st">"precursorsPTM_log"</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="co">#1.</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">qf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span>  <span class="co">#2.</span></span>
@@ -980,7 +1025,7 @@ according to the colname.</li>
 <pre><code><span><span class="co">## harmonizing input:</span></span>
 <span><span class="co">##   removing 54 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">##   removing 18 colData rownames not in sampleMap 'primary'</span></span></code></pre>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-18-2.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-19-2.png" class="r-plt" alt="" width="700"></p>
 <p>The data seems very clean. However, normalisation is still
 required.</p>
 <p>We use the median of ratio normalisation, which addresses both
@@ -1117,11 +1162,11 @@ nicely overlap (using the same code as above)</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10530534 562.4   17343065  926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 31867143 243.2  134492011 1026.1 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10530578 562.4   17346340  926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 31868368 243.2  134492983 1026.2 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10530538 562.4   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 31867186 243.2  107593609 820.9 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10530582 562.4   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 31868411 243.2  107594387 820.9 262552028 2003.2</span></span></code></pre>
 <p>Note, that normalisation could have been avoided by using
 Precursor.Normalised which is already internally normalised by DIA-NN.
 However, we do not know the exact procedure for this.</p>
@@ -1189,11 +1234,11 @@ for a comprehensive list.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10546816 563.3   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 32338395 246.8  107593609 820.9 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10546866 563.3   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 32339620 246.8  107594387 820.9 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10546823 563.3   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 32338443 246.8  107593609 820.9 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10546873 563.3   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 32339668 246.8  107594387 820.9 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -1248,11 +1293,11 @@ the non-enriched runs.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10576480 564.9   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 35985865 274.6  107593609 820.9 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10576530 564.9   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35987090 274.6  107594387 820.9 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10576487 564.9   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 35985913 274.6  107593609 820.9 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10576537 564.9   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35987138 274.6  107594387 820.9 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="charge-state">Charge state<a class="anchor" aria-label="anchor" href="#charge-state"></a>
@@ -1279,11 +1324,11 @@ the non-enriched runs.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10583988 565.3   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 36183207 276.1  107593609 820.9 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10584038 565.3   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 36184432 276.1  107594387 820.9 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10583995 565.3   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 36183255 276.1  107593609 820.9 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10584045 565.3   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 36184480 276.1  107594387 820.9 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -1328,11 +1373,11 @@ the non-enriched runs.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10640318 568.3   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 29894900 228.1   86074888 656.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10640368 568.3   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 29896125 228.1   86075510 656.8 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10640298 568.3   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 29894903 228.1   86074888 656.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10640348 568.3   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 29896128 228.1   86075510 656.8 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="dimensionality-reduction-plot">Dimensionality reduction plot<a class="anchor" aria-label="anchor" href="#dimensionality-reduction-plot"></a>
@@ -1351,11 +1396,11 @@ colouring).</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10662435 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 29959930 228.6   86074888 656.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10662485 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 29961155 228.6   86075510 656.8 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10662424 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 29959948 228.6   86074888 656.7 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10662474 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 29961173 228.6   86075510 656.8 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="non-enriched-runs">Non-enriched runs<a class="anchor" aria-label="anchor" href="#non-enriched-runs"></a>
@@ -1435,11 +1480,11 @@ colouring).</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10662912 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 31085381 237.2  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10662962 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 31086606 237.2  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10662916 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 31085424 237.2  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10662966 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 31086649 237.2  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="charge-state-1">Charge state<a class="anchor" aria-label="anchor" href="#charge-state-1"></a>
@@ -1466,11 +1511,11 @@ colouring).</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10662911 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 48247592 368.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10662961 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 48248817 368.2  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10662918 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 48247640 368.2  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10662968 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 48248865 368.2  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="identifications-per-sample-1">Identifications per sample<a class="anchor" aria-label="anchor" href="#identifications-per-sample-1"></a>
@@ -1512,11 +1557,11 @@ colouring).</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10663026 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 29945854 228.5  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10663076 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 29947079 228.5  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10663030 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 29945897 228.5  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10663080 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 29947122 228.5  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -1532,11 +1577,11 @@ colouring).</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10662610 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 29947079 228.5  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10662660 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 29948304 228.5  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 10662599 569.5   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 29947097 228.5  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 10662649 569.5   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 29948322 228.5  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -1566,11 +1611,11 @@ robustness against outliers.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11363611 606.9   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 31938371 243.7  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11363661 606.9   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 31939596 243.7  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11363621 606.9   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 31938424 243.7  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11363671 606.9   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 31939649 243.7  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="inference">Inference<a class="anchor" aria-label="anchor" href="#inference"></a>
@@ -1643,11 +1688,11 @@ summarised experiment in the <code>qf</code> object.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11520428 615.3   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34495288 263.2  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11520478 615.3   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 34496513 263.2  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11520432 615.3   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34495331 263.2  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11520482 615.3   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 34496556 263.2  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="report-results">Report results<a class="anchor" aria-label="anchor" href="#report-results"></a>
@@ -8229,7 +8274,7 @@ significant precursors)</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/plotVolcano.html" class="external-link">plotVolcano</a></span><span class="op">(</span><span class="va">inferencesPTM</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">contrast</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Precursor-level Phospho DA"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-33-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-34-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb174"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inferencesPTM</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">adjPval</span> <span class="op">&lt;</span> <span class="va">alpha</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -8240,7 +8285,7 @@ significant precursors)</p>
 <span>           colour <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-34-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-35-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="heatmaps">Heatmaps<a class="anchor" aria-label="anchor" href="#heatmaps"></a>
@@ -8287,11 +8332,11 @@ rows ourselves to avoid issues with missing values.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11739744 627.0   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34971593 266.9  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11739774 627.0   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 34972818 266.9  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11739751 627.0   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34971641 266.9  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11739781 627.0   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 34972866 266.9  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="detail-plots">Detail plots<a class="anchor" aria-label="anchor" href="#detail-plots"></a>
@@ -8458,11 +8503,11 @@ protein-level log2-FC.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11758307 628.0   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34999694 267.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11758337 628.0   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35000919 267.1  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11758314 628.0   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34999742 267.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11758344 628.0   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35000967 267.1  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 </div>
@@ -8482,11 +8527,11 @@ robustness against outliers.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11758305 628.0   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34999743 267.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11758335 628.0   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35000968 267.1  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11758315 628.0   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34999796 267.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11758345 628.0   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35001021 267.1  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="inference-1">Inference<a class="anchor" aria-label="anchor" href="#inference-1"></a>
@@ -8498,11 +8543,11 @@ summarised experiment in the <code>qf</code> object.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11758306 628.0   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34999797 267.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11758336 628.0   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35001022 267.1  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11758316 628.0   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 34999850 267.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11758346 628.0   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35001075 267.1  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="report-results-1">Report results<a class="anchor" aria-label="anchor" href="#report-results-1"></a>
@@ -8609,11 +8654,11 @@ non-enriched assay.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11759099 628.1   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 35001532 267.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11759129 628.1   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35002757 267.1  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11759106 628.1   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 35001580 267.1  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11759136 628.1   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 35002805 267.1  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <p>We see for multiple top DA phospho-precursors, that the reason for DA
 seems to be associated with the similar changes in overall protein
 abundance. Interestingly for other phospho-precursors the abundance of
@@ -8821,16 +8866,16 @@ least 6 samples.</p>
 <pre><code><span><span class="co">## harmonizing input:</span></span>
 <span><span class="co">##   removing 126 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">##   removing 18 colData rownames not in sampleMap 'primary'</span></span></code></pre>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-46-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-47-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11774661 628.9   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 43463951 331.7  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11774691 628.9   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 43465176 331.7  105314713 803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger  (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 11774668 628.9   17343065 926.3  17343065  926.3</span></span>
-<span><span class="co">## Vcells 43463999 331.7  105313488 803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 11774698 628.9   17346340 926.4  17346340  926.4</span></span>
+<span><span class="co">## Vcells 43465224 331.7  105314713 803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="model-estimation-2">Model estimation<a class="anchor" aria-label="anchor" href="#model-estimation-2"></a>
@@ -8849,11 +8894,11 @@ robustness against outliers.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 12440445 664.4   22558295 1204.8  17343065  926.3</span></span>
-<span><span class="co">## Vcells 45301855 345.7  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 12440475 664.4   22556714 1204.7  17346340  926.4</span></span>
+<span><span class="co">## Vcells 45303080 345.7  105314713  803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 12440452 664.4   22558295 1204.8  17343065  926.3</span></span>
-<span><span class="co">## Vcells 45301903 345.7  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 12440482 664.4   22556714 1204.7  17346340  926.4</span></span>
+<span><span class="co">## Vcells 45303128 345.7  105314713  803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="inference-2">Inference<a class="anchor" aria-label="anchor" href="#inference-2"></a>
@@ -8871,11 +8916,11 @@ summarised experiment in the <code>qf</code> object.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 12440681 664.5   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 46109162 351.8  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 12440721 664.5   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 46110387 351.8  105314713  803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 12440685 664.5   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 46109205 351.8  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 12440725 664.5   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 46110430 351.8  105314713  803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="report-results-2">Report results<a class="anchor" aria-label="anchor" href="#report-results-2"></a>
@@ -11094,7 +11139,7 @@ proteins)</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/plotVolcano.html" class="external-link">plotVolcano</a></span><span class="op">(</span><span class="va">inferencesUsage</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">contrast</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Usage"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-50-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-51-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb225"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inferencesUsage</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">adjPval</span> <span class="op">&lt;</span> <span class="va">alpha</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -11105,7 +11150,7 @@ proteins)</p>
 <span>           colour <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-51-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-52-1.png" class="r-plt" alt="" width="700"></p>
 <p>We observe that the number of significant precursors reduced
 drastically.</p>
 </div>
@@ -11233,7 +11278,7 @@ precursor with the most significant log2 usage.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">outplot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-53-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-54-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb238"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">ptm</span>, <span class="va">protein</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="op">{</span></span>
@@ -11249,7 +11294,7 @@ precursor with the most significant log2 usage.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-54-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-55-1.png" class="r-plt" alt="" width="700"></p>
 <p>We compare the intensities for the top 5 DA phospo-precursors for the
 first contrast to these of their corresponding protein in the
 non-enriched assay and to the usages.</p>
@@ -11382,11 +11427,11 @@ non-enriched assay and to their unadjusted abundances.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 12442386 664.5   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 40108793 306.1  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 12442426 664.5   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 40110018 306.1  105314713  803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 12442390 664.5   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 40108836 306.1  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 12442430 664.5   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 40110061 306.1  105314713  803.5 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 </div>
@@ -11513,7 +11558,7 @@ position on a protein in one protein expression value.</p>
 <pre><code><span><span class="co">## harmonizing input:</span></span>
 <span><span class="co">##   removing 162 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">##   removing 18 colData rownames not in sampleMap 'primary'</span></span></code></pre>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-58-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-59-1.png" class="r-plt" alt="" width="700"></p>
 <p>We remove temporarily objects</p>
 <div class="sourceCode" id="cb251"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">se</span>, <span class="va">seDup</span>, <span class="va">mod</span>, <span class="va">pos</span>, <span class="va">ids</span>, <span class="va">phosIds</span><span class="op">)</span></span></code></pre></div>
@@ -11521,11 +11566,11 @@ position on a protein in one protein expression value.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 12626301 674.4   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 47385009 361.6  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 12626341 674.4   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 47386234 361.6  105314713  803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 12626305 674.4   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 47385052 361.6  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 12626345 674.4   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 47386277 361.6  105314713  803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="model-estimation-3">Model estimation<a class="anchor" aria-label="anchor" href="#model-estimation-3"></a>
@@ -11543,11 +11588,11 @@ robustness against outliers.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 13060097 697.5   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 48637445 371.1  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 13060137 697.5   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 48638666 371.1  105314713  803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 13060104 697.5   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 48637493 371.1  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 13060144 697.5   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 48638714 371.1  105314713  803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="inference-3">Inference<a class="anchor" aria-label="anchor" href="#inference-3"></a>
@@ -11565,11 +11610,11 @@ summarised experiment in the <code>qf</code> object.</p>
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 13122647 700.9   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 49932185 381.0  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 13122687 700.9   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 49933406 381.0  105314713  803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 13122651 700.9   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 49932228 381.0  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 13122691 700.9   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 49933449 381.0  105314713  803.5 262552028 2003.2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="report-results-3">Report results<a class="anchor" aria-label="anchor" href="#report-results-3"></a>
@@ -13478,7 +13523,7 @@ proteins)</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/msqrob2/man/plotVolcano.html" class="external-link">plotVolcano</a></span><span class="op">(</span><span class="va">inferencesPtmUsage</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">contrast</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"PTM Usage"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-63-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-64-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb266"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">inferencesPtmUsage</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">adjPval</span> <span class="op">&lt;</span> <span class="va">alpha</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -13489,7 +13534,7 @@ proteins)</p>
 <span>           colour <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-64-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-65-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="heatmaps-3">Heatmaps<a class="anchor" aria-label="anchor" href="#heatmaps-3"></a>
@@ -13607,7 +13652,7 @@ significant log2 fold change.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Protein:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"_"</span>,<span class="st">" / phosho-position: "</span>, <span class="va">target_feature</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-66-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-67-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb282"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">ptm</span>, <span class="va">precursor</span>, <span class="va">protein</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="op">{</span></span>
@@ -13627,16 +13672,16 @@ significant log2 fold change.</p>
 <span><span class="co">## (`stat_boxplot()`).</span></span></code></pre>
 <pre><code><span><span class="co">## Warning: Removed 24 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">## (`geom_point()`).</span></span></code></pre>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-67-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-68-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb285"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Garbage collection to free space </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/gc.html" class="external-link">gc</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 13123496 700.9   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 45754939 349.1  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 13123536 700.9   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 45756168 349.1  105314713  803.5 262552028 2003.2</span></span></code></pre>
 <pre><code><span><span class="co">##            used  (Mb) gc trigger   (Mb)  max used   (Mb)</span></span>
-<span><span class="co">## Ncells 13123500 700.9   22558295 1204.8  22558295 1204.8</span></span>
-<span><span class="co">## Vcells 45754982 349.1  105313488  803.5 262550801 2003.2</span></span></code></pre>
+<span><span class="co">## Ncells 13123540 700.9   22556714 1204.7  22556714 1204.7</span></span>
+<span><span class="co">## Vcells 45756211 349.1  105314713  803.5 262552028 2003.2</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -13715,7 +13760,7 @@ down, non-significant or missing</li>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">xlim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">mapping</span><span class="op">[</span><span class="va">prot</span>,<span class="st">"length"</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">prot</span>, <span class="st">": Phospho residues"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">contrast</span><span class="op">~</span><span class="va">.</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-72-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-73-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="along-protein-plot-for-all-precursors">Along protein plot for all precursors<a class="anchor" aria-label="anchor" href="#along-protein-plot-for-all-precursors"></a>
@@ -13809,7 +13854,7 @@ multiple phospho sites with variables seqOrder, type and contrast</li>
 <span>    <span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">prot</span>, <span class="st">" along with precursors"</span><span class="op">)</span>,</span>
 <span>           subtitle <span class="op">=</span> <span class="st">"(phospho residue in black vertical line)"</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-75-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="msqrob2PTM_diann_workshop_files/figure-html/unnamed-chunk-76-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
 </div>
