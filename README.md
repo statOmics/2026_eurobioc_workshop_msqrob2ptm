@@ -8,6 +8,8 @@ Authors:
     <br/>
 Last modified: May 20, 2026.
 
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/qr_code.png)
+
 ## Overview
 
 ### Description
