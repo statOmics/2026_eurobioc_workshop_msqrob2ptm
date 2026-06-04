@@ -216,7 +216,7 @@ independent acquisition workflow.
 The data for the non-enriched and phospho-enriched samples are deposited to 
 PRIDE, dataset identifiers PXD068388 and PXD068392). 
 
-Summary: 
+### Summary: 
 
 - Mutations in tRNAs can lead to mis-incorporation of amino acids during protein 
   translation.
@@ -224,6 +224,21 @@ Summary:
   (Pro -> Ala, Pro -> Ser and Arg -> Ser).
 - 6 biological repeats per strain
 - For each biological repeat: non-enriched and phospho-enriched MS run. 
+
+### Summary: 
+
+- Mutations in tRNAs can lead to mis-incorporation of amino acids during protein 
+  translation.
+- 4 strains: WT, 3 strains with mutations leading to miss-incorporations 
+  (Pro -> Ala, Pro -> Ser and Arg -> Ser).
+- 6 biological repeats per strain
+- Here we use the non-enriched MS runs from three random bio-repeats and 
+  phospho-enriched MS runs from the other three bio-repeats so as to have 
+  unpaired samples. 
+
+```{r, echo = FALSE, out.width = "90%", fig.cap = "'tRNA variants induce mistranslation. a) Schematic representing the three mistranslating tRNAs used in this study. b) Mistranslation frequency for each strain determined by mass spectrometry. Wild-type yeast strain BY4741 expressing either an empty vector control or a mistranslating tRNA variant were grown in minimal media lacking uracil to an OD600 of ∼1.0 and mass spectrometry analysis of the cellular proteome was performed. The percent of unique peptides detected with either proline to alanine, proline to serine or arginine to serine substitutions was calculated for each respective variant and the control strain. c) Growth rate for the control strain and strains expressing each mistranslating tRNA was determined from growth curves performed in minimal media lacking uracil. Strains were diluted to an OD600 of ∼0.1 and grown for 24 h. Growth relative to the control strain, set as 1.0, was calculated from the doubling time. d) Representative growth of the control strain and strains expressing each mistranslating tRNA on solid minimal media lacking uracil. Overnight cultures of each strain were grown in minimal media lacking uracil, spotted in 10-fold serial dilutions and grown for 2 days. e) Correlation between relative growth rate of each strain as determined in (c) vs mistranslation frequency calculated by summing the total intensity of all identified mistranslated peptides and normalized to the total intensity of peptides identified in the mass spectrometry data. In all panels, each point represents 1 biological replicate.' Berg et al. 2026"}
+knitr::include_graphics("https://raw.githubusercontent.com/statOmics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/figureExperiment.jpeg")
+```
 
 M. Berg, A. Chang, R. Rodriguez-Mias, J. Villén, Mistranslating tRNA variants 
 impact the proteome and phosphoproteome of Saccharomyces cerevisiae, 
