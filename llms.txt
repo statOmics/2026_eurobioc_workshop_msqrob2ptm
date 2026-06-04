@@ -4,6 +4,8 @@ Authors: Lieven Clement[^1], Nina Demeulemeester[^2], Luca De Corso[^3],
 Lucas Beerland[^4]\
 Last modified: May 20, 2026.
 
+![](https://raw.githubusercontent.com/statomics/2026_eurobioc_workshop_msqrob2ptm/devel/vignettes/figs/qr_code.png)
+
 ## Overview
 
 ### Description
